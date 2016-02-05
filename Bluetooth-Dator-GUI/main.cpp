@@ -45,6 +45,12 @@ int main(void)
 	bool running = true;
 	while (running) {
 		while (window.pollEvent(e)) {
+			if (e.type == sf::Event::Closed)
+			{
+				window.close();
+				return 0;
+			}
+
 			if (e.type == sf::Event::KeyPressed) {
 				switch (e.key.code) {
 				case sf::Keyboard::Escape:
