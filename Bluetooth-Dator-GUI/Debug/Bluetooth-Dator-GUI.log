@@ -1,3 +1,0 @@
-﻿  main.cpp
-c:\users\joakim\documents\githubvisualstudio\bluetooth-dator-gui\bluetooth-dator-gui\main.cpp(11): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-  Bluetooth-Dator-GUI.vcxproj -> C:\Users\Joakim\Documents\GitHubVisualStudio\Bluetooth-Dator-GUI\Bluetooth-Dator-GUI\Debug\Bluetooth-Dator-GUI.exe
