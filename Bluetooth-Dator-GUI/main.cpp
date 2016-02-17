@@ -1,12 +1,16 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "Xboxcontroller.h"
 
 int main(void)
 {
-	sf::RenderWindow window(sf::VideoMode(800, 600, 32), "Joystick Use", sf::Style::Default);
+	sf::RenderWindow window(sf::VideoMode(1600, 900, 32), "Joystick Use", sf::Style::Default); //F?nstret hanteras som om det vore 1600x900 hela tiden.
 	sf::Event e;
 
+	Xboxcontroller xboxcontroller{ 100, 100, 400, 300 };
+
 	sf::RectangleShape square;
+
 	square.setFillColor(sf::Color(255, 0, 0, 255));
 	square.setPosition(window.getSize().x / 2, window.getSize().y / 2);
 	square.setOutlineColor(sf::Color(0, 0, 0, 255));
@@ -16,7 +20,7 @@ int main(void)
 	sf::Joystick::Identification id = sf::Joystick::getIdentification(0);
 	std::cout << "\nVendor ID: " << id.vendorId << "\nProduct ID: " << id.productId << std::endl;
 	sf::String controller("Joystick Use: " + id.name);
-	window.setTitle(controller);//easily tells us what controller is connected
+	window.setTitle(controller);         //easily tells us what controller is connected
 								
 	//query joystick for settings if it's plugged in...
 	if (sf::Joystick::isConnected(0)) {
@@ -44,6 +48,9 @@ int main(void)
 
 	bool running = true;
 	while (running) {
+
+		xboxcontroller.update();
+
 		while (window.pollEvent(e)) {
 			if (e.type == sf::Event::Closed)
 			{
@@ -80,11 +87,6 @@ int main(void)
 			if (!sf::Joystick::isButtonPressed(0, 0)) {
 				turbo = 1;
 			}
-
-			if (sf::Joystick::isButtonPressed(0, 1)) {//"B" button on the XBox 360 controller
-				window.close();
-				return 0;
-			}
 		}
 		//check state of joystick
 		speed = sf::Vector2f(sf::Joystick::getAxisPosition(0, sf::Joystick::X), sf::Joystick::getAxisPosition(0, sf::Joystick::Y));
@@ -103,6 +105,7 @@ int main(void)
 		}
 		window.clear(sf::Color(255, 0, 255));
 		window.draw(square);
+		xboxcontroller.draw(window);
 		window.display();
 	}
 	return 0;
