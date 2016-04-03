@@ -6,21 +6,10 @@ int main(void)
 {
 	sf::RenderWindow window(sf::VideoMode(1600, 900, 32), "Joystick Use", sf::Style::Default); //F?nstret hanteras som om det vore 1600x900 hela tiden.
 	sf::Event e;
+	window.setTitle("Dator GUI");
 
-	Xboxcontroller xboxcontroller{ 100, 100, 400, 300 };
-
-	sf::RectangleShape square;
-
-	square.setFillColor(sf::Color(255, 0, 0, 255));
-	square.setPosition(window.getSize().x / 2, window.getSize().y / 2);
-	square.setOutlineColor(sf::Color(0, 0, 0, 255));
-	square.setSize(sf::Vector2f(50.f, 50.f));
-
-	//get information about the joystick
-	sf::Joystick::Identification id = sf::Joystick::getIdentification(0);
-	std::cout << "\nVendor ID: " << id.vendorId << "\nProduct ID: " << id.productId << std::endl;
-	sf::String controller("Joystick Use: " + id.name);
-	window.setTitle(controller);         //easily tells us what controller is connected
+	Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
+	
 								
 	//query joystick for settings if it's plugged in...
 	if (sf::Joystick::isConnected(0)) {
@@ -33,21 +22,18 @@ int main(void)
 		std::cout << "Button count: " << buttonCount << std::endl;
 		std::cout << "Has a z-axis: " << hasZ << std::endl;
 	}
-
-	bool move = false;//indicate whether motion is detected
-	int turbo = 1;//indicate whether player is using button for turbo speed ;)
-
-				  //for movement
-	sf::Vector2f speed = sf::Vector2f(0.f, 0.f);
+	
 
 	//time
 	sf::Clock tickClock;
-	sf::Time timeSinceLastUpdate = sf::Time::Zero;
-	sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
+	sf::Time timeOfLastUpdate = sf::Time::Zero;
 	sf::Time duration = sf::Time::Zero;
+	const sf::Time frameTime = sf::seconds(1.f/60.f);
 
 	bool running = true;
 	while (running) {
+
+		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
 
 		xboxcontroller.update();
 
@@ -70,43 +56,17 @@ int main(void)
 					break;
 				}
 			}
-
-			if (e.type == sf::Event::JoystickMoved) {
-				move = true;
-				std::cout << "X axis: " << speed.x << std::endl;
-				std::cout << "Y axis: " << speed.y << std::endl;
-			}
-			else {
-				move = false;
-			}
-
-			if (sf::Joystick::isButtonPressed(0, 0)) {//"A" button on the XBox 360 controller
-				turbo = 2;
-			}
-
-			if (!sf::Joystick::isButtonPressed(0, 0)) {
-				turbo = 1;
-			}
 		}
-		//check state of joystick
-		speed = sf::Vector2f(sf::Joystick::getAxisPosition(0, sf::Joystick::X), sf::Joystick::getAxisPosition(0, sf::Joystick::Y));
 
-		timeSinceLastUpdate += tickClock.restart();
-		while (timeSinceLastUpdate > TimePerFrame)
-		{
-			timeSinceLastUpdate -= TimePerFrame;
-
-			//update the position of the square according to input from joystick
-			//CHECK DEAD ZONES - OTHERWISE INPUT WILL RESULT IN JITTERY MOVEMENTS WHEN NO INPUT IS PROVIDED
-			//INPUT RANGES FROM -100 TO 100
-			//A 15% DEAD ZONE SEEMS TO WORK FOR ME - GIVE THAT A SHOT
-			if (speed.x > 20.f || speed.x < -20.f || speed.y > 20.f || speed.y < -20.f)
-				square.move(turbo*speed.x*TimePerFrame.asSeconds(), turbo*speed.y*TimePerFrame.asSeconds());
-		}
 		window.clear(sf::Color(255, 0, 255));
-		window.draw(square);
 		xboxcontroller.draw(window);
 		window.display();
+
+		duration = sf::seconds(tickClock.getElapsedTime().asSeconds()) - timeOfLastUpdate;
+		if (duration < frameTime) {
+			sf::sleep(frameTime - duration);
+		}
+
 	}
 	return 0;
 }

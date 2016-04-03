@@ -161,10 +161,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Histogram.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Xboxcontroller.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Histogram.h" />
     <ClInclude Include="Xboxcontroller.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
