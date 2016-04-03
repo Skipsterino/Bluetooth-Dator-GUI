@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Xboxcontroller.h"
+#include "Histogram.h"
 
 int main(void)
 {
@@ -9,6 +10,7 @@ int main(void)
 	window.setTitle("Dator GUI");
 
 	Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
+	Histogram testhist{ 500, 500, 100, 100, 5 };
 	
 								
 	//query joystick for settings if it's plugged in...
@@ -60,6 +62,7 @@ int main(void)
 
 		window.clear(sf::Color(255, 0, 255));
 		xboxcontroller.draw(window);
+		testhist.draw(window);
 		window.display();
 
 		duration = sf::seconds(tickClock.getElapsedTime().asSeconds()) - timeOfLastUpdate;
@@ -70,3 +73,4 @@ int main(void)
 	}
 	return 0;
 }
+
