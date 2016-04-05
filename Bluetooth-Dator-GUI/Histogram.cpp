@@ -47,9 +47,9 @@ Histogram::Histogram(float xpos, float ypos, float width, float height, int time
 	sekHalv.setString(std::to_string(maxTime/2));
 	sekHel.setString(std::to_string(maxTime));
 
-	sekNoll.setCharacterSize(24);
-	sekHalv.setCharacterSize(24);
-	sekHel.setCharacterSize(24);
+	sekNoll.setCharacterSize(12);
+	sekHalv.setCharacterSize(12);
+	sekHel.setCharacterSize(12);
 
 	sekNoll.setColor(sf::Color(0, 0, 0, 255));
 	sekHalv.setColor(sf::Color(0, 0, 0, 255));

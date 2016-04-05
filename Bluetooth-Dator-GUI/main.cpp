@@ -1,17 +1,19 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <iostream>
 #include "Xboxcontroller.h"
 #include "Histogram.h"
 
 int main(void)
 {
-	sf::RenderWindow window(sf::VideoMode(1000, 700, 64), "Joystick Use", sf::Style::Default); //F?nstret hanteras som om det vore 1600x900 hela tiden.
+	sf::RenderWindow window(sf::VideoMode(1600, 900, 64), "Joystick Use", sf::Style::Default); //F?nstret hanteras som om det vore 1600x900 hela tiden.
 	sf::Event e;
 	window.setTitle("Dator GUI");
 
 	//Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
-	Histogram testhist1{ 400, 300, 300, 200, 10 };
+	Histogram testhist1{ 800, 300, 300, 200, 10 };
+	Histogram testhist2{ 800, 600, 300, 200, 10 };
 								
 	//query joystick for settings if it's plugged in...
 	if (sf::Joystick::isConnected(0)) {
@@ -30,7 +32,7 @@ int main(void)
 	sf::Clock tickClock;
 	sf::Time timeOfLastUpdate = sf::Time::Zero;
 	sf::Time duration = sf::Time::Zero;
-	const sf::Time frameTime = sf::seconds(1.f/60.f);
+	const sf::Time frameTime = sf::seconds(1.f/30.f);
 
 	bool running = true;
 	while (running) {
@@ -61,15 +63,18 @@ int main(void)
 			}
 		}
 
-		window.clear(sf::Color(255, 0, 255));
+		window.clear(sf::Color(255, 255, 255));
 		//xboxcontroller.draw(window);
 		testhist1.draw(window);
+		testhist2.draw(window);
 		window.display();
 
 		duration = sf::seconds(tickClock.getElapsedTime().asSeconds()) - timeOfLastUpdate;
 		if (duration < frameTime) {
 			sf::sleep(frameTime - duration);
 		}
+
+		testhist2.push(100*(1 - duration / frameTime));
 
 	}
 	return 0;
