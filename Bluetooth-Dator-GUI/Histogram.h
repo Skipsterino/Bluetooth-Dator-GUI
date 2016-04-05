@@ -17,8 +17,9 @@ public:
 private:
 	static sf::Clock timer;
 
-	std::vector<std::pair<float, sf::Time> > distances;
+	std::vector<std::pair<float, float> > distTime;
 	std::vector<std::pair<std::pair<float, float>,std::pair<float,float>>> graphLines;
+	std::vector<std::pair<float, float> > graphPoints;
 	const int maxTime;
 	const float xpos;
 	const float ypos;
