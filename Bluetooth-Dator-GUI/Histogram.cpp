@@ -11,20 +11,11 @@ Histogram::Histogram(float xpos, float ypos, float width, float height, int time
 	distances{},
 	graphLines{}
 {
-	sf::Vertex yAxis[] =
-	{
-		sf::Vertex(sf::Vector2f(xpos + width/10.f, ypos), sf::Color(0,0,0,255)),
-		sf::Vertex(sf::Vector2f(xpos + width/10.f, ypos + height), sf::Color(0,0,0,255))
-	};
+	graphLines.push_back({ {xpos + width / 10.f, ypos}, 
+						   { xpos + width / 10.f, ypos + height} });
+	graphLines.push_back({ { xpos, ypos + 9.f * height / 10.f },
+						   { xpos + width, ypos + 9.f * height / 10.f } });
 
-	sf::Vertex xAxis[] =
-	{
-		sf::Vertex(sf::Vector2f(xpos, ypos + 9.f * height / 10.f), sf::Color(0,0,0,255)),
-		sf::Vertex(sf::Vector2f(xpos + width, ypos + 9.f * height / 10.f), sf::Color(0,0,0,255))
-	};
-
-	//graphLines.push_back(test);
-	//graphLines.push_back(xAxis);
 }
 
 
@@ -37,7 +28,13 @@ void Histogram::push(float value) {
 }
 
 void Histogram::draw(sf::RenderWindow& window) {
-	std::vector<sf::Vertex> bos(2);
-	//window.draw(graphLines[0], 2, sf::Lines);
-	//window.draw(graphLines[1], 2, sf::Lines);
+	for (auto& i : graphLines){
+		sf::Vertex temp[] =
+		{
+			sf::Vertex(sf::Vector2f(i.first.first, i.first.second), sf::Color(0,0,0,255)),
+			sf::Vertex(sf::Vector2f(i.second.first, i.second.second), sf::Color(0,0,0,255))
+		};
+		window.draw(temp, 2, sf::Lines);
+	}
+	//window.draw(yAxis, 2, sf::Lines);
 }

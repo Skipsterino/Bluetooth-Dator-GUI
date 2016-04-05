@@ -5,11 +5,11 @@
 
 int main(void)
 {
-	sf::RenderWindow window(sf::VideoMode(1600, 900, 32), "Joystick Use", sf::Style::Default); //F?nstret hanteras som om det vore 1600x900 hela tiden.
+	sf::RenderWindow window(sf::VideoMode(1000, 700, 64), "Joystick Use", sf::Style::Default); //F?nstret hanteras som om det vore 1600x900 hela tiden.
 	sf::Event e;
 	window.setTitle("Dator GUI");
 
-	Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
+	//Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
 	Histogram testhist{ 500, 500, 100, 100, 5 };
 	
 								
@@ -37,7 +37,7 @@ int main(void)
 
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
 
-		xboxcontroller.update();
+		//xboxcontroller.update();
 
 		while (window.pollEvent(e)) {
 			if (e.type == sf::Event::Closed)
@@ -61,7 +61,7 @@ int main(void)
 		}
 
 		window.clear(sf::Color(255, 0, 255));
-		xboxcontroller.draw(window);
+		//xboxcontroller.draw(window);
 		testhist.draw(window);
 		window.display();
 

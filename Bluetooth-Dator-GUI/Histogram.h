@@ -18,11 +18,13 @@ private:
 	static sf::Clock timer;
 
 	std::vector<std::pair<float, sf::Time> > distances;
-	std::vector<sf::Vertex[2]> graphLines;
+	std::vector<std::pair<std::pair<float, float>,std::pair<float,float>>> graphLines;
 	const int maxTime;
 	const float xpos;
 	const float ypos;
 	const float width;
 	const float height;
+	sf::Vertex xAxis;
+	sf::Vertex yAxis;
 };
 #endif
