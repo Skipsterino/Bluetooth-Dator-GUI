@@ -20,6 +20,7 @@ private:
 	std::vector<std::pair<float, float> > distTime;
 	std::vector<std::pair<std::pair<float, float>,std::pair<float,float>>> graphLines;
 	std::vector<std::pair<float, float> > graphPoints;
+	std::vector<sf::Text> graphLetters;
 	const int maxTime;
 	const float xpos;
 	const float ypos;
@@ -27,5 +28,6 @@ private:
 	const float height;
 	sf::Vertex xAxis;
 	sf::Vertex yAxis;
+	sf::Font font;
 };
 #endif

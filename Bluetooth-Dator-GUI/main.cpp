@@ -12,7 +12,6 @@ int main(void)
 
 	//Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
 	Histogram testhist1{ 400, 300, 300, 200, 10 };
-	Histogram testhist2{ 400, 300, 300, 200, 10 };
 								
 	//query joystick for settings if it's plugged in...
 	if (sf::Joystick::isConnected(0)) {
@@ -65,7 +64,6 @@ int main(void)
 		window.clear(sf::Color(255, 0, 255));
 		//xboxcontroller.draw(window);
 		testhist1.draw(window);
-		testhist2.draw(window);
 		window.display();
 
 		duration = sf::seconds(tickClock.getElapsedTime().asSeconds()) - timeOfLastUpdate;
