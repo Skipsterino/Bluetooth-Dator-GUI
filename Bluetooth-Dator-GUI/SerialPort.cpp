@@ -1,4 +1,5 @@
 #include "SerialPort.h"
+#include <iostream>
 
 SerialPort::SerialPort() {
 	serialPortHandle = INVALID_HANDLE_VALUE;
@@ -12,7 +13,13 @@ SerialPort::~SerialPort() {
 }
 
 int SerialPort::connect() {
-	return connect(L"COM3");
+	if (!connect(TEXT("COM5")))
+	{
+		std::cout << "Serial port connected!" << std::endl;
+		connected = true;
+		return true;
+	}
+	return false;
 }
 
 int SerialPort::connect(wchar_t* device) {
@@ -52,12 +59,18 @@ int SerialPort::connect(wchar_t* device) {
 void SerialPort::disconnect(void) {
 	CloseHandle(serialPortHandle);
 	serialPortHandle = INVALID_HANDLE_VALUE;
-
+	connected = false;
+	std::cout << "Serial port disconnected" << std::endl;
 	//printf("Port 1 has been CLOSED and %d is the file descriptionn", fileDescriptor);
 }
 
+bool SerialPort::isConnected() const
+{
+	return connected;
+}
+
 int SerialPort::sendArray(unsigned char *buffer, int len) {
-	unsigned long result;
+	unsigned long result{ 0 };
 
 	if (serialPortHandle != INVALID_HANDLE_VALUE)
 		WriteFile(serialPortHandle, buffer, len, &result, NULL);
@@ -66,9 +79,8 @@ int SerialPort::sendArray(unsigned char *buffer, int len) {
 }
 
 int SerialPort::getArray(unsigned char *buffer, int len) {
-	unsigned long read_nbr;
+	unsigned long read_nbr{ 0 };
 
-	read_nbr = 0;
 	if (serialPortHandle != INVALID_HANDLE_VALUE)
 	{
 		ReadFile(serialPortHandle, buffer, len, &read_nbr, NULL);

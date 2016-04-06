@@ -7,18 +7,37 @@
 #include "Histogram.h"
 #include "SerialPort.h"
 
-void bluetoothThreadReadWrite(SerialPort& bluetoothPort) {
-	while (true) {
-		unsigned char* buffer = new unsigned char[5];
+void bluetoothThreadReadWrite(bool &running) {
+	std::cout << "Starting reading thread" << std::endl;
 
-		//bluetoothPort.getArray(buffer, 5);
+	SerialPort bluetoothPort;
 
-		//std::cout << buffer;
+	bluetoothPort.connect();
+
+	std::string test{};
+	test.append("KioskKioskKiosk6");
+	bluetoothPort.sendArray((unsigned char*)test.c_str(), 16);
+
+	unsigned char buffer[17] = "";
+	memset(buffer, 0, sizeof(buffer));
+	//C-hax för printing
+	buffer[16] = '\0';
+
+	while (running) {
+
+		while (!bluetoothPort.getArray(buffer, 16));
+
+		std::printf((const char*)buffer);
 	}
+
+	bluetoothPort.disconnect();
+
+	std::cout << "Stopping reading thread" << std::endl;
 }
 
 int main(void)
 {
+	bool running = true;
 	sf::RenderWindow window(sf::VideoMode(1000, 600, 64), "Joystick Use", sf::Style::Default); //F?nstret hanteras som om det vore 1600x900 hela tiden.
 	sf::Event e;
 	window.setTitle("Dator GUI");
@@ -27,11 +46,7 @@ int main(void)
 	Histogram testhist1{ 400, 50, 300, 200, 10 };
 	Histogram testhist2{ 400, 350, 300, 200, 10 };
 
-	SerialPort bluetoothPort;
-
-	bluetoothPort.connect();
-
-	sf::Thread btThread(bluetoothThreadReadWrite, bluetoothPort);
+	sf::Thread btThread(bluetoothThreadReadWrite, running);
 	btThread.launch();
 								
 	//query joystick for settings if it's plugged in...
@@ -53,15 +68,11 @@ int main(void)
 	sf::Time duration = sf::Time::Zero;
 	const sf::Time frameTime = sf::seconds(1.f/30.f);
 
-	bool running = true;
+	
 	while (running) {
 		//testhist1.push(50 + 50 * sin(tickClock.getElapsedTime().asSeconds()));
 
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
-
-	std::string test{};
-	test.append("Kiosk");
-	bluetoothPort.sendArray((unsigned char*)test.c_str(), 5);
 
 		//xboxcontroller.update();
 
@@ -69,7 +80,7 @@ int main(void)
 			if (e.type == sf::Event::Closed)
 			{
 				window.close();
-				return 0;
+				running = false;
 			}
 
 			if (e.type == sf::Event::KeyPressed) {
@@ -77,7 +88,7 @@ int main(void)
 				case sf::Keyboard::Escape:
 				{
 					window.close();
-					return 0;
+					running = false;
 				}
 				break;
 				default:
@@ -100,6 +111,8 @@ int main(void)
 		testhist2.push(100*(1 - duration / frameTime));
 
 	}
+	btThread.terminate();
+	//bluetoothPort.disconnect();
 	return 0;
 }
 
