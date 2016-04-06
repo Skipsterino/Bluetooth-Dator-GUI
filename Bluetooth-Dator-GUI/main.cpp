@@ -2,18 +2,37 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
+#include <string>
 #include "Xboxcontroller.h"
 #include "Histogram.h"
+#include "SerialPort.h"
+
+void bluetoothThreadReadWrite(SerialPort& bluetoothPort) {
+	while (true) {
+		unsigned char* buffer = new unsigned char[5];
+
+		//bluetoothPort.getArray(buffer, 5);
+
+		//std::cout << buffer;
+	}
+}
 
 int main(void)
 {
-	sf::RenderWindow window(sf::VideoMode(1600, 900, 64), "Joystick Use", sf::Style::Default); //F?nstret hanteras som om det vore 1600x900 hela tiden.
+	sf::RenderWindow window(sf::VideoMode(1000, 600, 64), "Joystick Use", sf::Style::Default); //F?nstret hanteras som om det vore 1600x900 hela tiden.
 	sf::Event e;
 	window.setTitle("Dator GUI");
 
 	//Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
-	Histogram testhist1{ 800, 300, 300, 200, 10 };
-	Histogram testhist2{ 800, 600, 300, 200, 10 };
+	Histogram testhist1{ 400, 50, 300, 200, 10 };
+	Histogram testhist2{ 400, 350, 300, 200, 10 };
+
+	SerialPort bluetoothPort;
+
+	bluetoothPort.connect();
+
+	sf::Thread btThread(bluetoothThreadReadWrite, bluetoothPort);
+	btThread.launch();
 								
 	//query joystick for settings if it's plugged in...
 	if (sf::Joystick::isConnected(0)) {
@@ -36,9 +55,13 @@ int main(void)
 
 	bool running = true;
 	while (running) {
-		testhist1.push(50 + 50 * sin(tickClock.getElapsedTime().asSeconds()));
+		//testhist1.push(50 + 50 * sin(tickClock.getElapsedTime().asSeconds()));
 
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
+
+	std::string test{};
+	test.append("Kiosk");
+	bluetoothPort.sendArray((unsigned char*)test.c_str(), 5);
 
 		//xboxcontroller.update();
 
