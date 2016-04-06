@@ -3,56 +3,59 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <cstring>
+#include <mutex>
 #include "Xboxcontroller.h"
 #include "Histogram.h"
 #include "SerialPort.h"
 
-void bluetoothThreadReadWrite(bool &running) {
+unsigned char incomingBuffer[17] = "";
+unsigned char outgoingBuffer[16] = "";
+sf::Mutex incBufMutex;
+sf::Mutex outBufMutex;
+
+void lockIncBuf() {incBufMutex.lock();}
+void unlockIncBuf() {incBufMutex.unlock();}
+void lockOutBuf() {outBufMutex.lock();}
+void unlockOutBuf() {outBufMutex.unlock();}
+
+void bluetoothThreadReadWrite(bool& running) {
 	std::cout << "Starting reading thread" << std::endl;
 
 	std::string port = "";
-	//std::cout << "Enter COM port:";
-	//std::cin >> port;
+	std::cout << "Enter COM port:";
+	std::cin >> port;
 
 	SerialPort bluetoothPort;
 
 	bluetoothPort.connect(port);
 
-	unsigned char incomingBuffer[17] = "";
-	memset(incomingBuffer, 0, sizeof(incomingBuffer));
+	//memset(incomingBuffer, 0, sizeof(incomingBuffer));
+	//memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
+
 	//C-hax för printing
-	incomingBuffer[16] = '\0';
-
-	unsigned char outgoingBuffer[16] = "";
-	memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
-
-
-	//Fyll med temp-data
-	outgoingBuffer[0] = 111;
-	outgoingBuffer[1] = 44;
-	outgoingBuffer[2] = 124;
-	outgoingBuffer[3] = 128;
-	outgoingBuffer[4] = 126;
-	outgoingBuffer[5] = 212;
+	unsigned char tempIncomingBuffer[17] = "";
+	tempIncomingBuffer[16] = '\0';
 
 	while (running) {
 
-		std::cout << "Thread loop" << std::endl;
-		
-		if (outgoingBuffer[0] != 0)
-		{
+		if (bluetoothPort.getArray(tempIncomingBuffer, 16)){
+
+			std::cout << tempIncomingBuffer << '\n';
+
+			lockIncBuf();
+			std::memcpy(incomingBuffer, tempIncomingBuffer, sizeof(tempIncomingBuffer));
+			unlockIncBuf();
+		}
+
+		lockOutBuf();
+		if (outgoingBuffer[0] != 0){
+
 			std::cout << "Sending buffer" << std::endl;
 			bluetoothPort.sendArray(outgoingBuffer, 16);
 			memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
 		}
-
-		if (bluetoothPort.getArray(incomingBuffer, 16))
-		{
-			std::cout << "Inne i inläsning\n";
-			std::cout << incomingBuffer << '\n';
-		}
-
-		sf::sleep(sf::milliseconds(5));
+		unlockOutBuf();
 	}
 
 	bluetoothPort.disconnect();
