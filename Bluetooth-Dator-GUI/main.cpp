@@ -10,24 +10,41 @@
 void bluetoothThreadReadWrite(bool &running) {
 	std::cout << "Starting reading thread" << std::endl;
 
+	std::string port;
+	std::cout << "Enter COM port:";
+	std::cin >> port;
+
 	SerialPort bluetoothPort;
 
-	bluetoothPort.connect();
+	bluetoothPort.connect(port);
 
-	std::string test{};
-	test.append("KioskKioskKiosk6");
-	bluetoothPort.sendArray((unsigned char*)test.c_str(), 16);
-
-	unsigned char buffer[17] = "";
-	memset(buffer, 0, sizeof(buffer));
+	unsigned char incomingBuffer[17] = "";
+	memset(incomingBuffer, 0, sizeof(incomingBuffer));
 	//C-hax för printing
-	buffer[16] = '\0';
+	incomingBuffer[16] = '\0';
+
+	unsigned char outgoingBuffer[16] = "";
+	memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
+
+
+	//Fyll med temp-data
+	outgoingBuffer[0] = 111;
+	outgoingBuffer[1] = 43;
 
 	while (running) {
 
-		while (!bluetoothPort.getArray(buffer, 16));
+		if (bluetoothPort.getArray(incomingBuffer, 16))
+		{
+			std::printf((const char*)incomingBuffer);
+		}
 
-		std::printf((const char*)buffer);
+		if (outgoingBuffer[0] > 0)
+		{
+			bluetoothPort.sendArray(outgoingBuffer, 16);
+			memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
+		}
+
+		sf::sleep(sf::milliseconds(5));
 	}
 
 	bluetoothPort.disconnect();
@@ -112,7 +129,6 @@ int main(void)
 
 	}
 	btThread.terminate();
-	//bluetoothPort.disconnect();
 	return 0;
 }
 

@@ -2,6 +2,7 @@
 #define SERIALPORT_H
 
 #include <Windows.h>
+#include <string>
 
 class SerialPort {
 private:
@@ -12,9 +13,8 @@ public:
 	SerialPort();
 	~SerialPort();
 
-	int connect();
+	int connect(std::string& port);
 	int connect(wchar_t *device);
-	//int connect (char *deviceName, int baudRate, SerialParity parity);
 	void disconnect(void);
 
 	bool isConnected() const;

@@ -12,13 +12,14 @@ SerialPort::~SerialPort() {
 	serialPortHandle = INVALID_HANDLE_VALUE;
 }
 
-int SerialPort::connect() {
-	if (!connect(TEXT("COM5")))
+int SerialPort::connect(std::string& port) {
+	if (!connect((wchar_t*) port.c_str()))
 	{
 		std::cout << "Serial port connected!" << std::endl;
 		connected = true;
 		return true;
 	}
+	std::cout << "Error connecting to serial port!" << std::endl;
 	return false;
 }
 
