@@ -13,7 +13,7 @@ SerialPort::~SerialPort() {
 }
 
 int SerialPort::connect(std::string& port) {
-	if (!connect((wchar_t*) port.c_str()))
+	if (!connect(TEXT("COM5")))
 	{
 		std::cout << "Serial port connected!" << std::endl;
 		connected = true;
