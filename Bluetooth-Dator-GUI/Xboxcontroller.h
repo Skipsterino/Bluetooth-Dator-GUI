@@ -1,6 +1,7 @@
 #ifndef XBOXCONTROLLER_H
 #define XBOXCONTROLLER_H
 
+#include <utility>
 #include<SFML/Graphics.hpp>
 
 class Xboxcontroller
@@ -13,6 +14,10 @@ public:
 	void update();
 	void draw(sf::RenderWindow&);
 
+	float leftStickAngle();
+	float leftStickIntensity();
+	float rightStickAngle();
+	float rightStickIntensity();
 
 private:
 	sf::Texture controller_texture;

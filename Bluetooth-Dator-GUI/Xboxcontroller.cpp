@@ -81,6 +81,31 @@ Xboxcontroller::Xboxcontroller(float xpos, float ypos, float width, float height
 
 }
 
+float Xboxcontroller::leftStickAngle() {
+	return (90 + 180 / 3.1415 * std::atan2f(left_lever_speed.y, left_lever_speed.x));
+}
+
+float Xboxcontroller::leftStickIntensity() {
+	if (left_lever_active) {
+		return std::sqrt(std::powf(left_lever_speed.x, 2) + std::powf(left_lever_speed.y, 2));
+	}
+	else {
+		return 0;
+	}
+}
+
+float Xboxcontroller::rightStickAngle() {
+	return (90 + 180 / 3.1415 * std::atan2f(right_lever_speed.y, right_lever_speed.x));
+}
+
+float Xboxcontroller::rightStickIntensity() {
+	if (right_lever_active) {
+		return std::sqrt(std::powf(right_lever_speed.x, 2) + std::powf(right_lever_speed.y, 2));
+	}
+	else {
+		return 0;
+	}
+}
 
 Xboxcontroller::~Xboxcontroller()
 {
@@ -94,7 +119,7 @@ void Xboxcontroller::update() {
 
 	if (left_lever_speed.x > 20.f || left_lever_speed.x < -20.f || left_lever_speed.y > 20.f || left_lever_speed.y < -20.f) {
 		left_lever_active = true;
-		left_angled_lever.setRotation(90 + 180 / 3.14 * std::atan2f(left_lever_speed.y, left_lever_speed.x));
+		left_angled_lever.setRotation(90 + 180 / 3.1415 * std::atan2f(left_lever_speed.y, left_lever_speed.x));
 	}
 	else{
 		left_lever_active = false;
@@ -102,7 +127,7 @@ void Xboxcontroller::update() {
 
 	if (right_lever_speed.x > 20.f || right_lever_speed.x < -20.f || right_lever_speed.y > 20.f || right_lever_speed.y < -20.f) {
 		right_lever_active = true;
-		right_angled_lever.setRotation(90 + 180 / 3.14 * std::atan2f(right_lever_speed.y, right_lever_speed.x));
+		right_angled_lever.setRotation(90 + 180 / 3.1415 * std::atan2f(right_lever_speed.y, right_lever_speed.x));
 	}
 	else {
 		right_lever_active = false;
