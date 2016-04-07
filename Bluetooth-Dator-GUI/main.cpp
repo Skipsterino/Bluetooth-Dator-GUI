@@ -23,12 +23,14 @@ void bluetoothThreadReadWrite(bool& running) {
 	std::cout << "Starting reading thread" << std::endl;
 
 	std::string port = "";
-	std::cout << "Enter COM port:";
+	std::cout << "Enter COM port: ";
 	std::cin >> port;
 
 	SerialPort bluetoothPort;
 
-	bluetoothPort.connect(port);
+	while (!bluetoothPort.isConnected()) {
+		bluetoothPort.connect(port);
+	}
 
 	//memset(incomingBuffer, 0, sizeof(incomingBuffer));
 	//memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
@@ -47,6 +49,12 @@ void bluetoothThreadReadWrite(bool& running) {
 			std::memcpy(incomingBuffer, tempIncomingBuffer, sizeof(tempIncomingBuffer));
 			unlockIncBuf();
 		}
+
+		lockIncBuf();
+		lockIncBuf();
+		std::memcpy(outgoingBuffer, incomingBuffer, sizeof(incomingBuffer));
+		unlockIncBuf();
+		unlockOutBuf();
 
 		lockOutBuf();
 		if (outgoingBuffer[0] != 0){
