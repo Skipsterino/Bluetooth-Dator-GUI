@@ -28,6 +28,8 @@ void bluetoothThreadReadWrite(bool& running) {
 
 	SerialPort bluetoothPort;
 
+	int packetCount = 0;
+
 	while (!bluetoothPort.isConnected()) {
 		bluetoothPort.connect(port);
 	}
@@ -43,27 +45,37 @@ void bluetoothThreadReadWrite(bool& running) {
 
 		if (bluetoothPort.getArray(tempIncomingBuffer, 16)){
 
-			std::cout << tempIncomingBuffer << '\n';
+			//std::cout << tempIncomingBuffer << '\n';
 
-			lockIncBuf();
+			//lockIncBuf();
 			std::memcpy(incomingBuffer, tempIncomingBuffer, sizeof(tempIncomingBuffer));
-			unlockIncBuf();
+			//unlockIncBuf();
 		}
-
-		lockIncBuf();
-		lockIncBuf();
+		else
+		{
+			continue;
+		}
+		//lockOutBuf();
+		//lockIncBuf();
+		packetCount++;
+		std::cout << "Data mottagen: " << packetCount*16 << "Bytes" << std::endl;
 		std::memcpy(outgoingBuffer, incomingBuffer, sizeof(incomingBuffer));
-		unlockIncBuf();
-		unlockOutBuf();
+		std::cout << "0:" << (int)outgoingBuffer[0] << std::endl;
+		std::cout << "1:" << (int)outgoingBuffer[1] << std::endl;
+		std::cout << "2:" << (int)outgoingBuffer[2] << std::endl;
+		std::cout << "3:" << (int)outgoingBuffer[3] << std::endl;
+		
+		//unlockOutBuf();
+		//unlockIncBuf();
 
-		lockOutBuf();
+		//lockOutBuf();
 		if (outgoingBuffer[0] != 0){
 
 			std::cout << "Sending buffer" << std::endl;
 			bluetoothPort.sendArray(outgoingBuffer, 16);
 			memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
 		}
-		unlockOutBuf();
+		//unlockOutBuf();
 	}
 
 	bluetoothPort.disconnect();
