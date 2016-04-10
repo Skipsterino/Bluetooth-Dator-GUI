@@ -27,6 +27,9 @@
     <ClCompile Include="SerialPort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AngleGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Xboxcontroller.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SerialPort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AngleGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

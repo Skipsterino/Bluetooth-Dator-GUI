@@ -16,20 +16,30 @@ Histogram::Histogram(float xpos, float ypos, float width, float height, int time
 	font{}
 {
 	//y-axel
-	graphLines.push_back({ {xpos + width / 10.f, ypos}, 
-						   { xpos + width / 10.f, ypos + height} });
+	graphLines.push_back(new sf::Vertex[2]{
+		sf::Vertex(sf::Vector2f(xpos + width / 10.f, ypos), sf::Color::Black),
+		sf::Vertex(sf::Vector2f(xpos + width / 10.f, ypos + height), sf::Color::Black)
+	});
 	//x-axel
-	graphLines.push_back({ { xpos, ypos + height },
-						   { xpos + width, ypos + height } });
+	graphLines.push_back(new sf::Vertex[2]{
+		sf::Vertex(sf::Vector2f(xpos, ypos + height), sf::Color::Black),
+		sf::Vertex(sf::Vector2f(xpos + width, ypos + height), sf::Color::Black)
+	});
 	//tidsaxel 0-sträck
-	graphLines.push_back({ { xpos + width, ypos + height - height/50},
-						   { xpos + width, ypos + height + height / 50 } });
+	graphLines.push_back(new sf::Vertex[2]{
+		sf::Vertex(sf::Vector2f(xpos + width, ypos + height - height / 50), sf::Color::Black),
+		sf::Vertex(sf::Vector2f(xpos + width, ypos + height + height / 50), sf::Color::Black)
+	});
 	//tidsaxel halv-sträck
-	graphLines.push_back({ { xpos + 11*width/20, ypos + height - height / 50 },
-						   { xpos + 11*width/20, ypos + height + height / 50 } });
+	graphLines.push_back(new sf::Vertex[2]{
+		sf::Vertex(sf::Vector2f(xpos + 11 * width / 20, ypos + height - height / 50), sf::Color::Black),
+		sf::Vertex(sf::Vector2f(xpos + 11 * width / 20, ypos + height + height / 50), sf::Color::Black)
+	});
 	//tidsaxel hel-sträck
-	graphLines.push_back({ { xpos + width / 10, ypos + height - height / 50 },
-						   { xpos + width / 10, ypos + height + height / 50 } });
+	graphLines.push_back(new sf::Vertex[2]{
+		sf::Vertex(sf::Vector2f(xpos + width / 10, ypos + height - height / 50), sf::Color::Black),
+		sf::Vertex(sf::Vector2f(xpos + width / 10.f, ypos + height), sf::Color::Black)
+	});
 	
 	if (!font.loadFromFile("Fonts/arial.ttf")) {
 		std::cout << "Fonten är arg och inte laddas" << std::endl;
@@ -67,41 +77,47 @@ Histogram::Histogram(float xpos, float ypos, float width, float height, int time
 
 Histogram::~Histogram()
 {
+	for (auto& i : graphLines) {
+		delete[] i;
+	}
 }
 
 void Histogram::push(float value) {
-	distTime.insert(distTime.begin(),{ value, timer.getElapsedTime().asSeconds() });
-
-	while (timer.getElapsedTime().asSeconds() - distTime[distTime.size() - 1].second > maxTime) {
-		distTime.pop_back();
-	}
-
-	graphPoints.clear();
-	graphPoints.reserve(distTime.size());
-
 	float curTime = timer.getElapsedTime().asSeconds();
 
-	for (auto& i : distTime) {
-		graphPoints.push_back({xpos + width*(1 + 9*(maxTime - (curTime - i.second))/maxTime)/10,
-							   ypos + height*(1 - i.first/100) });
+	distTime.insert(distTime.begin(),{ value, curTime });
+
+	unsigned int removecount{ 0 };
+	while (timer.getElapsedTime().asSeconds() - distTime[distTime.size() - 1].second > maxTime) {
+		distTime.pop_back();
+		++removecount;
+	}
+
+	for (auto i{0}; i < removecount; ++i) {
+		graphPoints.pop_back();
+	}
+
+	graphPoints.insert(graphPoints.begin(), { xpos + width,
+		ypos + height*(1 - distTime[0].first / 100) });
+
+	unsigned int iterations(graphPoints.size());
+
+	for (auto i{0}; i < iterations; ++i) {
+		graphPoints[i].first = xpos + width*(1 + 9 * (maxTime - (curTime - distTime[i].second)) / maxTime) / 10;
+							  
 	}
 }
 
 void Histogram::draw(sf::RenderWindow& window) {
 	for (auto& i : graphLines){
-		sf::Vertex temp[] =
-		{
-			sf::Vertex(sf::Vector2f(i.first.first, i.first.second), sf::Color(0,0,0,255)),
-			sf::Vertex(sf::Vector2f(i.second.first, i.second.second), sf::Color(0,0,0,255))
-		};
-		window.draw(temp, 2, sf::Lines);
+		window.draw(i, 2, sf::Lines);
 	}
 
 	for (auto& i : graphLetters) {window.draw(i);}
 
 	sf::VertexArray tempVerArr(sf::LinesStrip, 0);
 	for (auto& i : graphPoints) {
-		tempVerArr.append(sf::Vertex(sf::Vector2f(i.first, i.second), sf::Color(0, 0, 0, 255)));
+		tempVerArr.append(sf::Vertex(sf::Vector2f(i.first, i.second), sf::Color::Blue));
 	}
 	window.draw(tempVerArr);
 }

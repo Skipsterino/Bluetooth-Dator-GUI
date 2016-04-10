@@ -1,27 +1,23 @@
-#ifndef HISTOGRAM_H
-#define HISTOGRAM_H
+#ifndef ANGLEGRAPH_H
+#define ANGLEGRAPH_H
 
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <utility>
 
-class Histogram
+class AngleGraph
 {
 public:
-	Histogram() = delete;
-	Histogram(float, float, float, float, int);
-	~Histogram();
+	AngleGraph() = delete;
+	AngleGraph(float, float, float, float);
+	~AngleGraph();
 
 	void push(float);
 	void draw(sf::RenderWindow&);
 private:
-	static sf::Clock timer;
-
-	std::vector<std::pair<float, float> > distTime;
 	std::vector<sf::Vertex*> graphLines;
-	std::vector<std::pair<float, float> > graphPoints;
+	sf::Vertex* angleLine;
 	std::vector<sf::Text> graphLetters;
-	const int maxTime;
 	const float xpos;
 	const float ypos;
 	const float width;

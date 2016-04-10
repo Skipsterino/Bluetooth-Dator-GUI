@@ -161,12 +161,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AngleGraph.cpp" />
     <ClCompile Include="Histogram.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SerialPort.cpp" />
     <ClCompile Include="Xboxcontroller.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AngleGraph.h" />
     <ClInclude Include="Histogram.h" />
     <ClInclude Include="SerialPort.h" />
     <ClInclude Include="Xboxcontroller.h" />
