@@ -24,6 +24,7 @@ void bluetoothThreadReadWrite(SerialPort& bluetoothPort) {
 	int packetCount = 0;
 	
 	while (!bluetoothPort.isConnected()) {
+		std::cout << "Trying to connect..." << std::endl;
 		bluetoothPort.connect(port);
 	}
 	
@@ -41,24 +42,36 @@ void bluetoothThreadReadWrite(SerialPort& bluetoothPort) {
 
 			//std::cout << tempIncomingBuffer << '\n';
 
-			BufMutex.lock();
+//			BufMutex.lock();
 			std::memcpy(incomingBuffer, tempIncomingBuffer, sizeof(tempIncomingBuffer));
-			BufMutex.unlock();
+//			BufMutex.unlock();
 		}
 		else
 		{
 			continue;
 		}
 		
-		BufMutex.lock();
+//		BufMutex.lock();
 
 		packetCount++;
-		std::cout << "Data mottagen: " << packetCount*16 << "Bytes" << std::endl;
+		std::cout << "Data mottagen: " << packetCount*16 << " Bytes (" << packetCount << " paket)" << std::endl;
 		std::memcpy(outgoingBuffer, incomingBuffer, sizeof(incomingBuffer));
 		std::cout << "0:" << (int)outgoingBuffer[0] << std::endl;
 		std::cout << "1:" << (int)outgoingBuffer[1] << std::endl;
 		std::cout << "2:" << (int)outgoingBuffer[2] << std::endl;
 		std::cout << "3:" << (int)outgoingBuffer[3] << std::endl;
+		std::cout << "4:" << (int)outgoingBuffer[4] << std::endl;
+		std::cout << "5:" << (int)outgoingBuffer[5] << std::endl;
+		std::cout << "6:" << (int)outgoingBuffer[6] << std::endl;
+		std::cout << "7:" << (int)outgoingBuffer[7] << std::endl;
+		std::cout << "8:" << (int)outgoingBuffer[8] << std::endl;
+		std::cout << "9:" << (int)outgoingBuffer[9] << std::endl;
+		std::cout << "A:" << (int)outgoingBuffer[10] << std::endl;
+		std::cout << "B:" << (int)outgoingBuffer[11] << std::endl;
+		std::cout << "C:" << (int)outgoingBuffer[12] << std::endl;
+		std::cout << "D:" << (int)outgoingBuffer[13] << std::endl;
+		std::cout << "E:" << (int)outgoingBuffer[14] << std::endl;
+		std::cout << "F:" << (int)outgoingBuffer[15] << std::endl;
 
 		if (outgoingBuffer[0] != 0){
 
@@ -67,7 +80,7 @@ void bluetoothThreadReadWrite(SerialPort& bluetoothPort) {
 			memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
 		}
 
-		BufMutex.unlock();
+//		BufMutex.unlock();
 
 	}
 
