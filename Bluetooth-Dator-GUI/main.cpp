@@ -1,10 +1,10 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <cmath>
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <mutex>
 #include "Xboxcontroller.h"
 #include "Histogram.h"
 #include "SerialPort.h"
@@ -12,10 +12,12 @@
 
 unsigned char incomingBuffer[17] = "";
 unsigned char outgoingBuffer[16] = "";
-sf::Mutex BufMutex;
+sf::Mutex bufMutex;
 
 
-void bluetoothThreadReadWrite(SerialPort& bluetoothPort) {
+void bluetoothThread(bool& running) {
+
+	SerialPort bluetoothPort;
 
 	std::string port = "";
 	std::cout << "Enter COM port: ";
@@ -25,34 +27,29 @@ void bluetoothThreadReadWrite(SerialPort& bluetoothPort) {
 	
 	while (!bluetoothPort.isConnected()) {
 		std::cout << "Trying to connect..." << std::endl;
+		sf::sleep(sf::milliseconds(100));
 		bluetoothPort.connect(port);
 	}
 	
-
-	//memset(incomingBuffer, 0, sizeof(incomingBuffer));
-	//memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
-
 	//C-hax för printing
 	unsigned char tempIncomingBuffer[17] = "";
 	tempIncomingBuffer[16] = '\0';
-
-	while (true) {
+	
+	while (running) {
 		
 		if (bluetoothPort.getArray(tempIncomingBuffer, 16)){
 
 			//std::cout << tempIncomingBuffer << '\n';
 
-//			BufMutex.lock();
+			bufMutex.lock();
 			std::memcpy(incomingBuffer, tempIncomingBuffer, sizeof(tempIncomingBuffer));
-//			BufMutex.unlock();
+			bufMutex.unlock();
 		}
 		else
 		{
 			continue;
 		}
 		
-//		BufMutex.lock();
-
 		packetCount++;
 		std::cout << "Data mottagen: " << packetCount*16 << " Bytes (" << packetCount << " paket)" << std::endl;
 		std::memcpy(outgoingBuffer, incomingBuffer, sizeof(incomingBuffer));
@@ -73,14 +70,14 @@ void bluetoothThreadReadWrite(SerialPort& bluetoothPort) {
 		std::cout << "E:" << (int)outgoingBuffer[14] << std::endl;
 		std::cout << "F:" << (int)outgoingBuffer[15] << std::endl;
 
+		bufMutex.lock();
 		if (outgoingBuffer[0] != 0){
 
 			std::cout << "Sending buffer" << std::endl;
 			bluetoothPort.sendArray(outgoingBuffer, 16);
 			memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
 		}
-
-//		BufMutex.unlock();
+		bufMutex.unlock();
 
 	}
 
@@ -96,15 +93,14 @@ int main(void)
 	sf::Event e;
 	window.setTitle("Dator GUI");
 
-	//Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
+	Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
 	Histogram testhist1{ 400, 50, 300, 200, 10 };
 	Histogram testhist2{ 400, 350, 300, 200, 10 };
 	AngleGraph testangle1{ 100, 100, 200, 200};
 
 	testangle1.push(50);
 
-	SerialPort bluetoothPort;
-	sf::Thread btThread(bluetoothThreadReadWrite, bluetoothPort);
+	sf::Thread btThread(&bluetoothThread, running);
 	btThread.launch();
 								
 	//query joystick for settings if it's plugged in...
@@ -131,7 +127,7 @@ int main(void)
 
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
 
-		//xboxcontroller.update();
+		xboxcontroller.update();
 
 		while (window.pollEvent(e)) {
 			if (e.type == sf::Event::Closed)
@@ -155,7 +151,7 @@ int main(void)
 		}
 
 		window.clear(sf::Color(255, 255, 255));
-		//xboxcontroller.draw(window);
+		xboxcontroller.draw(window);
 		testhist1.draw(window);
 		testhist2.draw(window);
 		testangle1.draw(window);
@@ -170,7 +166,6 @@ int main(void)
 
 	}
 	btThread.terminate();
-	bluetoothPort.disconnect();
 	return 0;
 }
 
