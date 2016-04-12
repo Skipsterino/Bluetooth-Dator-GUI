@@ -9,7 +9,7 @@ class Histogram
 {
 public:
 	Histogram() = delete;
-	Histogram(float, float, float, float, int);
+	Histogram(float, float, float, float, int, sf::Font*);
 	~Histogram();
 
 	void push(float);
@@ -26,6 +26,6 @@ private:
 	const float ypos;
 	const float width;
 	const float height;
-	sf::Font font;
+	sf::Font* fontPtr;
 };
 #endif

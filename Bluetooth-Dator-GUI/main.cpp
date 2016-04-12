@@ -37,6 +37,8 @@ void bluetoothThread(bool& running) {
 	
 	while (running) {
 		
+		//sf::Lock lock(bufMutex);
+
 		if (bluetoothPort.getArray(tempIncomingBuffer, 16)){
 
 			//std::cout << tempIncomingBuffer << '\n';
@@ -52,6 +54,7 @@ void bluetoothThread(bool& running) {
 		
 		packetCount++;
 		std::cout << "Data mottagen: " << packetCount*16 << " Bytes (" << packetCount << " paket)" << std::endl;
+		bufMutex.lock();
 		std::memcpy(outgoingBuffer, incomingBuffer, sizeof(incomingBuffer));
 		std::cout << "0:" << (int)outgoingBuffer[0] << std::endl;
 		std::cout << "1:" << (int)outgoingBuffer[1] << std::endl;
@@ -69,14 +72,17 @@ void bluetoothThread(bool& running) {
 		std::cout << "D:" << (int)outgoingBuffer[13] << std::endl;
 		std::cout << "E:" << (int)outgoingBuffer[14] << std::endl;
 		std::cout << "F:" << (int)outgoingBuffer[15] << std::endl;
+//		bufMutex.unlock();
 
-		bufMutex.lock();
+//		bufMutex.lock();
 		if (outgoingBuffer[0] != 0){
 
 			std::cout << "Sending buffer" << std::endl;
 			bluetoothPort.sendArray(outgoingBuffer, 16);
 			memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
 		}
+
+
 		bufMutex.unlock();
 
 	}
@@ -93,9 +99,16 @@ int main(void)
 	sf::Event e;
 	window.setTitle("Dator GUI");
 
+	sf::Font font;
+
+	//Ladda font
+	if (!font.loadFromFile("Fonts/arial.ttf")) {
+		std::cout << "Fonten är arg och inte laddas" << std::endl;
+	}
+
 	Xboxcontroller xboxcontroller{ 100, 100, 600, 400 };
-	Histogram testhist1{ 400, 50, 300, 200, 10 };
-	Histogram testhist2{ 400, 350, 300, 200, 10 };
+	Histogram testhist1{ 400, 50, 300, 200, 10, &font };
+	Histogram testhist2{ 400, 350, 300, 200, 10 , &font};
 	AngleGraph testangle1{ 100, 100, 200, 200};
 
 	testangle1.push(50);
@@ -123,6 +136,8 @@ int main(void)
 	const sf::Time frameTime = sf::seconds(1.f/30.f);
 	float increase{ 0 };
 	while (running) {
+		//sf::Lock lock(bufMutex);
+
 		//testhist1.push(50 + 50 * sin(tickClock.getElapsedTime().asSeconds()));
 
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());

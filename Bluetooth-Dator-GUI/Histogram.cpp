@@ -3,7 +3,7 @@
 
 sf::Clock Histogram::timer;
 
-Histogram::Histogram(float xpos, float ypos, float width, float height, int timeLimit) :
+Histogram::Histogram(float xpos, float ypos, float width, float height, int timeLimit, sf::Font* fontPtr) :
 	maxTime{ timeLimit },
 	xpos{ xpos },
 	ypos{ ypos },
@@ -13,7 +13,7 @@ Histogram::Histogram(float xpos, float ypos, float width, float height, int time
 	graphLines{},
 	graphPoints{},
 	graphLetters{},
-	font{}
+	fontPtr{ fontPtr }
 {
 	//y-axel
 	graphLines.push_back(new sf::Vertex[2]{
@@ -40,18 +40,14 @@ Histogram::Histogram(float xpos, float ypos, float width, float height, int time
 		sf::Vertex(sf::Vector2f(xpos + width / 10, ypos + height - height / 50), sf::Color::Black),
 		sf::Vertex(sf::Vector2f(xpos + width / 10.f, ypos + height), sf::Color::Black)
 	});
-	
-	if (!font.loadFromFile("Fonts/arial.ttf")) {
-		std::cout << "Fonten är arg och inte laddas" << std::endl;
-	}
 
 	sf::Text sekNoll;
 	sf::Text sekHalv;
 	sf::Text sekHel;
 
-	sekNoll.setFont(font);
-	sekHalv.setFont(font);
-	sekHel.setFont(font);
+	sekNoll.setFont(*fontPtr);
+	sekHalv.setFont(*fontPtr);
+	sekHel.setFont(*fontPtr);
 
 	sekNoll.setString("0");
 	sekHalv.setString(std::to_string(maxTime/2));
