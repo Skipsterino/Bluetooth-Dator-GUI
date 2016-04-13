@@ -85,6 +85,9 @@ Histogram::~Histogram()
 }
 
 void Histogram::push(float value) {
+	if (value == 0) {
+		return;
+	}
 	float curTime = timer.getElapsedTime().asSeconds();
 
 	distTime.insert(distTime.begin(),{ value, curTime });

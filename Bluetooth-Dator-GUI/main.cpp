@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <fstream>
 #include "Xboxcontroller.h"
 #include "Histogram.h"
 #include "SerialPort.h"
@@ -13,11 +14,41 @@
 unsigned char incomingBuffer[17] = "";
 unsigned char outgoingBuffer[16] = "";
 
+#define UPS 30.f
+
 struct Threadinfo {
 	bool& running;
 	sf::Mutex& bufMutex;
 };
 
+struct Parameters {
+	unsigned char kp;
+	unsigned char kd;
+};
+
+void readFile(Parameters& param)
+{
+	std::cout << "Reading new parameters..." << std::endl;
+	std::string line;
+	std::ifstream file("reglerparametrar.txt");
+	if (file.is_open())
+	{
+		while (getline(file, line))
+		{
+			if (line.substr(0, 2) == "kp")
+			{
+				param.kp = stoi(line.substr(3));
+			}
+			else if (line.substr(0, 2) == "kd")
+			{
+				param.kd = stoi(line.substr(3));
+			}
+		}
+	}
+	file.close();
+	std::cout << "Reading done!" << std::endl;
+
+}
 
 void bluetoothThread(Threadinfo& ti) {
 
@@ -29,7 +60,7 @@ void bluetoothThread(Threadinfo& ti) {
 
 	int packetCount = 0;
 
-	while (!bluetoothPort.isConnected()) {
+	while (!bluetoothPort.isConnected() && ti.running) {
 		std::cout << "Trying to connect..." << std::endl;
 		sf::sleep(sf::milliseconds(100));
 		bluetoothPort.connect(port);
@@ -47,7 +78,7 @@ void bluetoothThread(Threadinfo& ti) {
 			std::memcpy(incomingBuffer, tempIncomingBuffer, sizeof(tempIncomingBuffer));
 			ti.bufMutex.unlock();
 		}
-		else{
+		else {
 			continue;
 		}
 
@@ -78,12 +109,10 @@ int main(void)
 	unsigned char localBuffer[16];
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	sf::RenderWindow window(sf::VideoMode(1600, 900, 64), "Joystick Use", sf::Style::Default, settings); //F?nstret hanteras som om det vore 1600x900 hela tiden.
+	sf::RenderWindow window(sf::VideoMode(1600, 900, 64), "SpiderPig Control Center", sf::Style::Default, settings); //F?nstret hanteras som om det vore 1600x900 hela tiden.
 	sf::Event e;
 	sf::Mutex bufMutex;
 	sf::Font font;
-
-	window.setTitle("Dator GUI");
 
 	//Ladda font
 	if (!font.loadFromFile("Fonts/arial.ttf")) {
@@ -92,8 +121,8 @@ int main(void)
 
 	//Skapar alla grafer och andra grafiska objekt
 	Xboxcontroller xboxcontroller{ 70, 630, 300, 200 };
-	Histogram timeHist{ 600, 250, 600, 400, 10, &font , "Downtime"};
-	Histogram graphIR0{ 1250, 30, 300, 100, 10, &font , "IR0"};
+	Histogram timeHist{ 600, 250, 600, 400, 10, &font , "Downtime" };
+	Histogram graphIR0{ 1250, 30, 300, 100, 10, &font , "IR0" };
 	Histogram graphIR1{ 1250, 170, 300, 100, 10 , &font , "IR1" };
 	Histogram graphIR2{ 1250, 310, 300, 100, 10 , &font , "IR2" };
 	Histogram graphIR3{ 1250, 450, 300, 100, 10 , &font , "IR3" };
@@ -102,6 +131,10 @@ int main(void)
 	AngleGraph testangle1{ 100, 100, 200, 200 };
 	AngleGraph testangle2{ 100, 400, 200, 200 };
 	AngleGraph testangle3{ 100, 700, 200, 200 };
+
+	Parameters param;
+	readFile(param);
+	//std::cout << (int)param.kp << " " << (int) param.kd << std::endl;
 
 	//Tr?d k?rs
 	Threadinfo ti{ running, bufMutex };
@@ -112,33 +145,54 @@ int main(void)
 	sf::Clock tickClock;
 	sf::Time timeOfLastUpdate = sf::Time::Zero;
 	sf::Time duration = sf::Time::Zero;
-	const sf::Time frameTime = sf::seconds(1.f / 30.f);
+	const sf::Time frameTime = sf::seconds(1.f / UPS);
 
 	while (running) {
-		
+
 
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
 
 		xboxcontroller.update();
 
 		while (window.pollEvent(e)) {
-			if (e.type == sf::Event::Closed)
+
+			switch (e.type)
 			{
+			case sf::Event::Closed:
+
 				window.close();
 				running = false;
-			}
+				break;
 
-			if (e.type == sf::Event::KeyPressed) {
+			case sf::Event::KeyPressed:
 				switch (e.key.code) {
 				case sf::Keyboard::Escape:
-				{
 					window.close();
 					running = false;
-				}
-				break;
+					break;
+				case sf::Keyboard::L:
+					readFile(param);
+					//std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
+					break;
 				default:
 					break;
 				}
+				break;
+
+			case sf::Event::JoystickButtonPressed:
+
+				switch (e.joystickButton.button)
+				{
+				case 0:
+					readFile(param);
+					//std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -210,11 +264,12 @@ int main(void)
 			sf::sleep(frameTime - duration);
 		}
 
-		timeHist.push(100*(1 - duration / frameTime));
+		timeHist.push(100 * (1 - duration / frameTime));
 
 	}
 
 	btThread.wait();
+	btThread.terminate();
 	return 0;
 }
 
