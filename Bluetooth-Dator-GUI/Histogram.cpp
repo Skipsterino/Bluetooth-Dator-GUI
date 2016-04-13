@@ -3,7 +3,7 @@
 
 sf::Clock Histogram::timer;
 
-Histogram::Histogram(float xpos, float ypos, float width, float height, int timeLimit, sf::Font* fontPtr) :
+Histogram::Histogram(float xpos, float ypos, float width, float height, int timeLimit, sf::Font* fontPtr, std::string titeltext) :
 	maxTime{ timeLimit },
 	xpos{ xpos },
 	ypos{ ypos },
@@ -54,18 +54,21 @@ Histogram::Histogram(float xpos, float ypos, float width, float height, int time
 		sf::Vertex(sf::Vector2f(xpos + width / 10 - height / 50, ypos), sf::Color::Black)
 	});
 
+	sf::Text titel;
 	sf::Text sekNoll;
 	sf::Text sekHalv;
 	sf::Text sekHel;
 	sf::Text yHel;
 	sf::Text yHalv;
 
+	formatText(titel, fontPtr, titeltext, xpos + 11*width/20, ypos - height/10, true);
 	formatText(sekNoll, fontPtr, "0", xpos + width, ypos + 52 * height / 50, true);
 	formatText(sekHalv, fontPtr, std::to_string(maxTime/2), xpos + 11 * width / 20, ypos + 52 * height / 50, true);
 	formatText(sekHel, fontPtr, std::to_string(maxTime), xpos + width / 10, ypos + 52 * height / 50, true);
-	formatText(yHel, fontPtr, std::to_string(maxHeight), yAxisTextPosFull.x, yAxisTextPosFull.y, false);
-	formatText(yHalv, fontPtr, std::to_string(maxHeight/2), yAxisTextPosHalf.x, yAxisTextPosHalf.y, false);
+	formatText(yHel, fontPtr, "Na", yAxisTextPosFull.x, yAxisTextPosFull.y, false);
+	formatText(yHalv, fontPtr, "Na", yAxisTextPosHalf.x, yAxisTextPosHalf.y, false);
 
+	graphLetters.push_back(titel);
 	graphLetters.push_back(sekNoll);
 	graphLetters.push_back(sekHalv);
 	graphLetters.push_back(sekHel);
@@ -145,11 +148,11 @@ void Histogram::updateHeight(float newHeight) {
 	for (auto i{ 0 }; i < iterations; ++i) {
 		graphPoints[i].second = ypos + height*(1 - distTime[i].first / newHeight);
 	}
-	graphLetters.at(3).setString(std::to_string(maxHeight));
-	graphLetters.at(3).setPosition(sf::Vector2f(yAxisTextPosFull.x - graphLetters.at(3).getLocalBounds().width,
+	graphLetters.at(4).setString(std::to_string(maxHeight));
+	graphLetters.at(4).setPosition(sf::Vector2f(yAxisTextPosFull.x - graphLetters.at(3).getLocalBounds().width,
 												yAxisTextPosFull.y - graphLetters.at(3).getLocalBounds().height));
-	graphLetters.at(4).setString(std::to_string(maxHeight/2));
-	graphLetters.at(4).setPosition(sf::Vector2f(yAxisTextPosHalf.x - graphLetters.at(4).getLocalBounds().width,
+	graphLetters.at(5).setString(std::to_string(maxHeight/2));
+	graphLetters.at(5).setPosition(sf::Vector2f(yAxisTextPosHalf.x - graphLetters.at(4).getLocalBounds().width,
 		yAxisTextPosHalf.y - graphLetters.at(4).getLocalBounds().height));
 }
 

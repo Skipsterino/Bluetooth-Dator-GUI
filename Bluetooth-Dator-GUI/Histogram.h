@@ -9,7 +9,7 @@ class Histogram
 {
 public:
 	Histogram() = delete;
-	Histogram(float, float, float, float, int, sf::Font*);
+	Histogram(float, float, float, float, int, sf::Font*, std::string = "");
 	~Histogram();
 
 	void push(float);

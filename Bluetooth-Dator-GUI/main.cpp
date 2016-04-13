@@ -92,13 +92,13 @@ int main(void)
 
 	//Skapar alla grafer och andra grafiska objekt
 	Xboxcontroller xboxcontroller{ 70, 630, 300, 200 };
-	Histogram timeHist{ 600, 250, 600, 400, 10, &font };
-	Histogram graphIR0{ 1250, 30, 300, 100, 10, &font };
-	Histogram graphIR1{ 1250, 170, 300, 100, 10 , &font };
-	Histogram graphIR2{ 1250, 310, 300, 100, 10 , &font };
-	Histogram graphIR3{ 1250, 450, 300, 100, 10 , &font };
-	Histogram graphIR4{ 1250, 590, 300, 100, 10 , &font };
-	Histogram graphIR5{ 1250, 730, 300, 100, 10 , &font };
+	Histogram timeHist{ 600, 250, 600, 400, 10, &font , "Downtime"};
+	Histogram graphIR0{ 1250, 30, 300, 100, 10, &font , "IR0"};
+	Histogram graphIR1{ 1250, 170, 300, 100, 10 , &font , "IR1" };
+	Histogram graphIR2{ 1250, 310, 300, 100, 10 , &font , "IR2" };
+	Histogram graphIR3{ 1250, 450, 300, 100, 10 , &font , "IR3" };
+	Histogram graphIR4{ 1250, 590, 300, 100, 10 , &font , "IR4" };
+	Histogram graphIR5{ 1250, 730, 300, 100, 10 , &font , "IR5" };
 	AngleGraph testangle1{ 100, 100, 200, 200 };
 	AngleGraph testangle2{ 100, 400, 200, 200 };
 	AngleGraph testangle3{ 100, 700, 200, 200 };
@@ -213,7 +213,8 @@ int main(void)
 		timeHist.push(100*(1 - duration / frameTime));
 
 	}
-	btThread.terminate();
+
+	btThread.wait();
 	return 0;
 }
 
