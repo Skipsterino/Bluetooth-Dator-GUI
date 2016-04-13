@@ -149,11 +149,11 @@ void Histogram::updateHeight(float newHeight) {
 		graphPoints[i].second = ypos + height*(1 - distTime[i].first / newHeight);
 	}
 	graphLetters.at(4).setString(std::to_string(maxHeight));
-	graphLetters.at(4).setPosition(sf::Vector2f(yAxisTextPosFull.x - graphLetters.at(3).getLocalBounds().width,
-												yAxisTextPosFull.y - graphLetters.at(3).getLocalBounds().height));
+	graphLetters.at(4).setPosition(sf::Vector2f(yAxisTextPosFull.x - graphLetters.at(4).getLocalBounds().width,
+												yAxisTextPosFull.y - graphLetters.at(4).getLocalBounds().height));
 	graphLetters.at(5).setString(std::to_string(maxHeight/2));
-	graphLetters.at(5).setPosition(sf::Vector2f(yAxisTextPosHalf.x - graphLetters.at(4).getLocalBounds().width,
-		yAxisTextPosHalf.y - graphLetters.at(4).getLocalBounds().height));
+	graphLetters.at(5).setPosition(sf::Vector2f(yAxisTextPosHalf.x - graphLetters.at(5).getLocalBounds().width,
+		yAxisTextPosHalf.y - graphLetters.at(5).getLocalBounds().height));
 }
 
 void Histogram::formatText(sf::Text& text, sf::Font* fontPtr, std::string textString, float xposition, float yposition, bool isTimeAxis) {
