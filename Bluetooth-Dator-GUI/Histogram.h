@@ -27,5 +27,12 @@ private:
 	const float width;
 	const float height;
 	sf::Font* fontPtr;
+	int maxHeight;
+	sf::Vector2f yAxisTextPosFull;
+	sf::Vector2f yAxisTextPosHalf;
+
+	float findHighestGraphPoint();
+	void updateHeight(float);
+	void formatText(sf::Text&, sf::Font*, std::string, float, float, bool);
 };
 #endif
