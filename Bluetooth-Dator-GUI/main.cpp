@@ -26,6 +26,24 @@ struct Parameters {
 	unsigned char kd;
 };
 
+int twoCompToDec8b(int twoComp) {
+	if (twoComp < 128) {
+		return twoComp;
+	}
+	else {
+		return twoComp - 256;
+	}
+}
+
+int decToTwoComp8b(int dec) {
+	if (dec < 0) {
+		return dec + 256;
+	}
+	else {
+		return dec;
+	}
+}
+
 void readFile(Parameters& param)
 {
 	std::cout << "Reading new parameters..." << std::endl;
@@ -121,20 +139,22 @@ int main(void)
 
 	//Skapar alla grafer och andra grafiska objekt
 	Xboxcontroller xboxcontroller{ 70, 630, 300, 200 };
-	Histogram timeHist{ 600, 250, 600, 400, 10, &font , "Downtime" };
+	Histogram timeHist{ 100, 100, 600, 400, 10, &font , "Downtime" };
 	Histogram graphIR0{ 1250, 30, 300, 100, 10, &font , "IR0" };
 	Histogram graphIR1{ 1250, 170, 300, 100, 10 , &font , "IR1" };
 	Histogram graphIR2{ 1250, 310, 300, 100, 10 , &font , "IR2" };
 	Histogram graphIR3{ 1250, 450, 300, 100, 10 , &font , "IR3" };
 	Histogram graphIR4{ 1250, 590, 300, 100, 10 , &font , "IR4" };
 	Histogram graphIR5{ 1250, 730, 300, 100, 10 , &font , "IR5" };
-	AngleGraph testangle1{ 100, 100, 200, 200 };
-	AngleGraph testangle2{ 100, 400, 200, 200 };
-	AngleGraph testangle3{ 100, 700, 200, 200 };
+	Histogram graphIR6{ 900, 30, 300, 100, 10 , &font , "IR6" };
+	Histogram ultraljud{ 900, 170, 300, 100, 10 , &font , "Ultraljud" };
+	AngleGraph IRyaw{ 400, 650, 180, 180 , &font, "IR Yaw" };
+	AngleGraph IMUyaw{ 600, 650, 180, 180 , &font, "IMU Yaw"};
+	AngleGraph IMUroll{ 800, 650, 180, 180 , &font, "IMU Roll" };
+	AngleGraph IMUpitch{ 1000, 650, 180, 180 , &font, "IMU Pitch" };
 
 	Parameters param;
 	readFile(param);
-	//std::cout << (int)param.kp << " " << (int) param.kd << std::endl;
 
 	//Tr?d k?rs
 	Threadinfo ti{ running, bufMutex };
@@ -205,33 +225,18 @@ int main(void)
 			bufMutex.unlock();
 
 			//Hantera data
-			/*
-			std::cout << "0:" << (int)localBuffer[0] << std::endl;
-			std::cout << "1:" << (int)localBuffer[1] << std::endl;
-			std::cout << "2:" << (int)localBuffer[2] << std::endl;
-			std::cout << "3:" << (int)localBuffer[3] << std::endl;
-			std::cout << "4:" << (int)localBuffer[4] << std::endl;
-			std::cout << "5:" << (int)localBuffer[5] << std::endl;
-			std::cout << "6:" << (int)localBuffer[6] << std::endl;
-			std::cout << "7:" << (int)localBuffer[7] << std::endl;
-			std::cout << "8:" << (int)localBuffer[8] << std::endl;
-			std::cout << "9:" << (int)localBuffer[9] << std::endl;
-			std::cout << "A:" << (int)localBuffer[10] << std::endl;
-			std::cout << "B:" << (int)localBuffer[11] << std::endl;
-			std::cout << "C:" << (int)localBuffer[12] << std::endl;
-			std::cout << "D:" << (int)localBuffer[13] << std::endl;
-			std::cout << "E:" << (int)localBuffer[14] << std::endl;
-			std::cout << "F:" << (int)localBuffer[15] << std::endl;
-			*/
 			graphIR0.push(localBuffer[0]);
 			graphIR1.push(localBuffer[1]);
 			graphIR2.push(localBuffer[2]);
 			graphIR3.push(localBuffer[3]);
 			graphIR4.push(localBuffer[4]);
 			graphIR5.push(localBuffer[5]);
-			testangle1.push(localBuffer[9]);
-			testangle2.push(localBuffer[10]);
-			testangle3.push(localBuffer[11]);
+			graphIR6.push(localBuffer[6]);
+			ultraljud.push(localBuffer[7]);
+			IRyaw.push(localBuffer[8]);
+			IMUyaw.push(twoCompToDec8b(localBuffer[9]));
+			IMUroll.push(twoCompToDec8b(localBuffer[10]));
+			IMUpitch.push(twoCompToDec8b(localBuffer[11]));
 		}
 		else {
 			bufMutex.unlock();
@@ -240,7 +245,7 @@ int main(void)
 		//Skicka data data
 		bufMutex.lock();
 		outgoingBuffer[0] = 3;
-		outgoingBuffer[1] = xboxcontroller.leftStickAngle();
+		outgoingBuffer[1] = decToTwoComp8b(255*xboxcontroller.leftStickAngle()/360);
 		outgoingBuffer[2] = xboxcontroller.leftStickIntensity();
 		bufMutex.unlock();
 
@@ -254,9 +259,12 @@ int main(void)
 		graphIR3.draw(window);
 		graphIR4.draw(window);
 		graphIR5.draw(window);
-		testangle1.draw(window);
-		testangle2.draw(window);
-		testangle3.draw(window);
+		graphIR6.draw(window);
+		ultraljud.draw(window);
+		IRyaw.draw(window);
+		IMUyaw.draw(window);
+		IMUroll.draw(window);
+		IMUpitch.draw(window);
 		window.display();
 
 		duration = sf::seconds(tickClock.getElapsedTime().asSeconds()) - timeOfLastUpdate;

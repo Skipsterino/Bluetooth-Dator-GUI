@@ -82,8 +82,15 @@ Xboxcontroller::Xboxcontroller(float xpos, float ypos, float width, float height
 }
 
 float Xboxcontroller::leftStickAngle() {
+	float angle{180 / (float)3.141592 * std::atan2f(left_lever_speed.x, left_lever_speed.y) };
+
 	if (left_lever_active) {
-		return (90 + 180 / 3.1415 * std::atan2f(left_lever_speed.y, left_lever_speed.x));
+		if (angle < 0) {
+			return angle + 180;
+		}
+		else {
+			return angle - 180;
+		}
 	}
 	else {
 		return 0;
@@ -100,8 +107,15 @@ float Xboxcontroller::leftStickIntensity() {
 }
 
 float Xboxcontroller::rightStickAngle() {
+	float angle{ 180 / (float)3.141592 * std::atan2f(right_lever_speed.x, right_lever_speed.y) };
+
 	if (right_lever_active) {
-		return (90 + 180 / 3.1415 * std::atan2f(right_lever_speed.y, right_lever_speed.x));
+		if (angle < 0) {
+			return angle + 180;
+		}
+		else {
+			return angle - 180;
+		}
 	}
 	else {
 		return 0;

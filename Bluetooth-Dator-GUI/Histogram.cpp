@@ -3,7 +3,7 @@
 
 sf::Clock Histogram::timer;
 
-Histogram::Histogram(float xpos, float ypos, float width, float height, int timeLimit, sf::Font* fontPtr, std::string titeltext) :
+Histogram::Histogram(float xpos, float ypos, float width, float height, int timeLimit, sf::Font* fontPtr, std::string titletext) :
 	maxTime{ timeLimit },
 	xpos{ xpos },
 	ypos{ ypos },
@@ -61,7 +61,7 @@ Histogram::Histogram(float xpos, float ypos, float width, float height, int time
 	sf::Text yHel;
 	sf::Text yHalv;
 
-	formatText(titel, fontPtr, titeltext, xpos + 11*width/20, ypos - height/20 - 15, true);
+	formatText(titel, fontPtr, titletext, xpos + 11*width/20, ypos - height/20 - 15, true);
 	formatText(sekNoll, fontPtr, "0", xpos + width, ypos + 52 * height / 50, true);
 	formatText(sekHalv, fontPtr, std::to_string(maxTime/2), xpos + 11 * width / 20, ypos + 52 * height / 50, true);
 	formatText(sekHel, fontPtr, std::to_string(maxTime), xpos + width / 10, ypos + 52 * height / 50, true);

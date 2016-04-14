@@ -9,7 +9,7 @@ class AngleGraph
 {
 public:
 	AngleGraph() = delete;
-	AngleGraph(float, float, float, float);
+	AngleGraph(float, float, float, float, sf::Font*, std::string);
 	~AngleGraph();
 
 	void push(float);
@@ -22,6 +22,7 @@ private:
 	const float ypos;
 	const float width;
 	const float height;
-	sf::Font font;
+
+	void formatText(sf::Text&, sf::Font*, std::string, float, float);
 };
 #endif
