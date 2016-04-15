@@ -26,12 +26,12 @@ struct Parameters {
 	unsigned char kd;
 };
 
-int twoCompToDec8b(int twoComp) {
-	if (twoComp < 128) {
+int twoCompToDec(int twoComp, int bits) {
+	if (twoComp < std::pow(2, bits - 1)) {
 		return twoComp;
 	}
 	else {
-		return twoComp - 256;
+		return twoComp - std::pow(2, bits);
 	}
 }
 
@@ -234,9 +234,9 @@ int main(void)
 			graphIR6.push(localBuffer[6]);
 			ultraljud.push(localBuffer[7]);
 			IRyaw.push(localBuffer[8]);
-			IMUyaw.push(twoCompToDec8b(localBuffer[9]));
-			IMUroll.push(twoCompToDec8b(localBuffer[10]));
-			IMUpitch.push(twoCompToDec8b(localBuffer[11]));
+			IMUyaw.push(twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16));
+			IMUroll.push(twoCompToDec(localBuffer[12], 8));
+			IMUpitch.push(twoCompToDec(localBuffer[13], 8));
 		}
 		else {
 			bufMutex.unlock();
