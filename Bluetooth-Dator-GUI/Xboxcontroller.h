@@ -14,6 +14,10 @@ public:
 	void update();
 	void draw(sf::RenderWindow&);
 
+	bool leftLeverActive();
+	bool rightLeverActive();
+	float triggerValue();
+
 	float leftStickAngle();
 	float leftStickIntensity();
 	float rightStickAngle();

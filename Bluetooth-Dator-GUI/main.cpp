@@ -107,6 +107,7 @@ void bluetoothThread(Threadinfo& ti) {
 		if (outgoingBuffer[0] != 0) {
 
 			std::cout << "Sending buffer" << std::endl;
+			std::cout << (int)outgoingBuffer[0] << ", " << (int)outgoingBuffer[1] << ", " << (int)outgoingBuffer[2] << std::endl;
 			bluetoothPort.sendArray(outgoingBuffer, 16);
 			memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
 		}
@@ -233,7 +234,7 @@ int main(void)
 			graphIR5.push(localBuffer[5]);
 			graphIR6.push(localBuffer[6]);
 			ultraljud.push(localBuffer[7]);
-			IRyaw.push(localBuffer[8]);
+			IRyaw.push(twoCompToDec(localBuffer[8] + (localBuffer[9] << 8), 16));
 			IMUyaw.push(twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16));
 			IMUroll.push(twoCompToDec(localBuffer[12], 8));
 			IMUpitch.push(twoCompToDec(localBuffer[13], 8));
@@ -242,11 +243,17 @@ int main(void)
 			bufMutex.unlock();
 		}
 
+		//std::cout << xboxcontroller.leftStickAngle() << std::endl;
+		//std::cout << 100 - sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Z) << std::endl;
+		
 		//Skicka data data
 		bufMutex.lock();
-		outgoingBuffer[0] = 3;
-		outgoingBuffer[1] = decToTwoComp8b(255*xboxcontroller.leftStickAngle()/360);
-		outgoingBuffer[2] = xboxcontroller.leftStickIntensity();
+		outgoingBuffer[0] = 0;
+		if (xboxcontroller.leftLeverActive() || (int)xboxcontroller.triggerValue() != 0) {
+			outgoingBuffer[0] += 3;
+		}
+		outgoingBuffer[1] = xboxcontroller.leftStickAngle();
+		outgoingBuffer[2] = 100 - xboxcontroller.triggerValue();
 		bufMutex.unlock();
 
 		//Rita och sånt

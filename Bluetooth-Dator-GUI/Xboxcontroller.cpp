@@ -81,20 +81,29 @@ Xboxcontroller::Xboxcontroller(float xpos, float ypos, float width, float height
 
 }
 
-float Xboxcontroller::leftStickAngle() {
-	float angle{180 / (float)3.141592 * std::atan2f(left_lever_speed.x, left_lever_speed.y) };
-
+bool Xboxcontroller::leftLeverActive() {
 	if (left_lever_active) {
-		if (angle < 0) {
-			return angle + 180;
-		}
-		else {
-			return angle - 180;
-		}
+		return true;
 	}
-	else {
-		return 0;
+	return false;
+}
+bool Xboxcontroller::rightLeverActive() {
+	if (right_lever_active) {
+		return true;
 	}
+	return false;
+}
+
+float Xboxcontroller::triggerValue() {
+	return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Z);
+}
+
+float Xboxcontroller::leftStickAngle() {
+
+	if (left_lever_speed.x > 10 || left_lever_speed.x < -10) {
+		return 100 + left_lever_speed.x;
+	}
+	return 100;
 }
 
 float Xboxcontroller::leftStickIntensity() {
