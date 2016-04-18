@@ -17,6 +17,7 @@ public:
 	bool leftLeverActive();
 	bool rightLeverActive();
 	float triggerValue();
+	int dpadYAxis();
 
 	float leftStickAngle();
 	float leftStickIntensity();

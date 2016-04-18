@@ -234,7 +234,9 @@ int main(void)
 			graphIR5.push(localBuffer[5]);
 			graphIR6.push(localBuffer[6]);
 			ultraljud.push(localBuffer[7]);
-			IRyaw.push(twoCompToDec(localBuffer[8] + (localBuffer[9] << 8), 16));
+			IRyaw.push(twoCompToDec(localBuffer[8], 8));
+			//IRyawhöger.push(bös);
+			std::cout << (int)localBuffer[10] << ", " << (int)localBuffer[11] << ", " << localBuffer[10] + (localBuffer[11] << 8) << ", " << twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16) << std::endl;
 			IMUyaw.push(twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16));
 			IMUroll.push(twoCompToDec(localBuffer[12], 8));
 			IMUpitch.push(twoCompToDec(localBuffer[13], 8));
@@ -248,12 +250,18 @@ int main(void)
 		
 		//Skicka data data
 		bufMutex.lock();
-		outgoingBuffer[0] = 0;
+
+		outgoingBuffer[0] = 3;
 		if (xboxcontroller.leftLeverActive() || (int)xboxcontroller.triggerValue() != 0) {
-			outgoingBuffer[0] += 3;
+			//outgoingBuffer[0] += 3;
+		}
+		if (xboxcontroller.dpadYAxis() != 0) {
+			outgoingBuffer[0] += 4;
 		}
 		outgoingBuffer[1] = xboxcontroller.leftStickAngle();
 		outgoingBuffer[2] = 100 - xboxcontroller.triggerValue();
+		outgoingBuffer[3] = xboxcontroller.dpadYAxis();
+		
 		bufMutex.unlock();
 
 		//Rita och sånt
