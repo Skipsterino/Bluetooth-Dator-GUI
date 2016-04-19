@@ -1,9 +1,10 @@
 #include "SerialPort.h"
 #include <iostream>
+#include <string>
 
 SerialPort::SerialPort() {
 	serialPortHandle = INVALID_HANDLE_VALUE;
-}
+	}
 
 SerialPort::~SerialPort() {
 	if (serialPortHandle != INVALID_HANDLE_VALUE)
@@ -13,10 +14,12 @@ SerialPort::~SerialPort() {
 }
 
 int SerialPort::connect(std::string& port) {
+
 	if (!connect(TEXT("COM5")))
 	{
 		std::cout << "Serial port connected!" << std::endl;
 		connected = true;
+
 		return true;
 	}
 	std::cout << "Error connecting to serial port!" << std::endl;
@@ -26,6 +29,13 @@ int SerialPort::connect(std::string& port) {
 int SerialPort::connect(wchar_t* device) {
 	int error = 0;
 	DCB dcb;
+	COMMTIMEOUTS timeouts;
+
+	timeouts.ReadIntervalTimeout = 200;
+	timeouts.WriteTotalTimeoutConstant = 200;
+	timeouts.ReadTotalTimeoutConstant = 200;
+	timeouts.ReadTotalTimeoutMultiplier = 200;
+	timeouts.WriteTotalTimeoutMultiplier = 200;
 
 	memset(&dcb, 0, sizeof(dcb));
 
@@ -42,6 +52,8 @@ int SerialPort::connect(wchar_t* device) {
 	if (serialPortHandle != INVALID_HANDLE_VALUE) {
 		if (!SetCommState(serialPortHandle, &dcb))
 			error = 2;
+		else if (!SetCommTimeouts(serialPortHandle, &timeouts))
+			error = 3;
 	}
 	else {
 		error = 1;
@@ -85,6 +97,10 @@ int SerialPort::getArray(unsigned char *buffer, int len) {
 	if (serialPortHandle != INVALID_HANDLE_VALUE)
 	{
 		ReadFile(serialPortHandle, buffer, len, &read_nbr, NULL);
+		DWORD error = GetLastError();
+		if (error != ERROR_SUCCESS) {
+			connected = false;
+		}
 	}
 
 	return((int)read_nbr);

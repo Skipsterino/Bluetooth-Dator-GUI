@@ -80,7 +80,7 @@ void bluetoothThread(Threadinfo& ti) {
 
 	while (!bluetoothPort.isConnected() && ti.running) {
 		std::cout << "Trying to connect..." << std::endl;
-		sf::sleep(sf::milliseconds(100));
+		sf::sleep(sf::milliseconds(50));
 		bluetoothPort.connect(port);
 	}
 
@@ -89,6 +89,12 @@ void bluetoothThread(Threadinfo& ti) {
 	tempIncomingBuffer[16] = '\0';
 
 	while (ti.running) {
+
+		while (!bluetoothPort.isConnected()) {
+			std::cout << "Disconnected!!\n" << "Trying to connect..." << std::endl;
+			sf::sleep(sf::milliseconds(50));
+			bluetoothPort.connect(port);
+		}
 
 		if (bluetoothPort.getArray(tempIncomingBuffer, 16)) {
 
@@ -104,13 +110,11 @@ void bluetoothThread(Threadinfo& ti) {
 		std::cout << "Data mottagen: " << packetCount * 16 << " Bytes (" << packetCount << " paket)" << std::endl;
 
 		ti.bufMutex.lock();
-		if (outgoingBuffer[0] != 0) {
 
-			std::cout << "Sending buffer" << std::endl;
-			std::cout << (int)outgoingBuffer[0] << ", " << (int)outgoingBuffer[1] << ", " << (int)outgoingBuffer[2] << std::endl;
-			bluetoothPort.sendArray(outgoingBuffer, 16);
-			memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
-		}
+		std::cout << "Sending buffer" << std::endl;
+		std::cout << (int)outgoingBuffer[0] << ", " << (int)outgoingBuffer[1] << ", " << (int)outgoingBuffer[2] << std::endl;
+		bluetoothPort.sendArray(outgoingBuffer, 16);
+		memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
 
 		ti.bufMutex.unlock();
 
@@ -206,7 +210,27 @@ int main(void)
 				{
 				case 0:
 					readFile(param);
+					outgoingBuffer[0] |= (1 << 5);
+					outgoingBuffer[0] |= (1 << 6);
 					//std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
+					break;
+				case 1:
+					bufMutex.lock();
+					outgoingBuffer[0] |= (1 << 3);
+					outgoingBuffer[4] = 1;
+					bufMutex.unlock();
+					break;
+				case 2:
+					bufMutex.lock();
+					outgoingBuffer[0] |= (1 << 3);
+					outgoingBuffer[4] = 0;
+					bufMutex.unlock();
+					break;
+				case 3:
+					bufMutex.lock();
+					outgoingBuffer[0] |= (1 << 3);
+					outgoingBuffer[4] = 2;
+					bufMutex.unlock();
 					break;
 				default:
 					break;
@@ -236,7 +260,7 @@ int main(void)
 			ultraljud.push(localBuffer[7]);
 			IRyaw.push(twoCompToDec(localBuffer[8], 8));
 			//IRyawhöger.push(bös);
-			std::cout << (int)localBuffer[10] << ", " << (int)localBuffer[11] << ", " << localBuffer[10] + (localBuffer[11] << 8) << ", " << twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16) << std::endl;
+			//std::cout << (int)localBuffer[10] << ", " << (int)localBuffer[11] << ", " << localBuffer[10] + (localBuffer[11] << 8) << ", " << twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16) << std::endl;
 			IMUyaw.push(twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16));
 			IMUroll.push(twoCompToDec(localBuffer[12], 8));
 			IMUpitch.push(twoCompToDec(localBuffer[13], 8));
@@ -250,17 +274,17 @@ int main(void)
 		
 		//Skicka data data
 		bufMutex.lock();
-
-		outgoingBuffer[0] = 3;
 		if (xboxcontroller.leftLeverActive() || (int)xboxcontroller.triggerValue() != 0) {
-			//outgoingBuffer[0] += 3;
+			outgoingBuffer[0] |= 3;
 		}
 		if (xboxcontroller.dpadYAxis() != 0) {
-			outgoingBuffer[0] += 4;
+			outgoingBuffer[0] |= 4;
 		}
 		outgoingBuffer[1] = xboxcontroller.leftStickAngle();
 		outgoingBuffer[2] = 100 - xboxcontroller.triggerValue();
 		outgoingBuffer[3] = xboxcontroller.dpadYAxis();
+		outgoingBuffer[5] = param.kp;
+		outgoingBuffer[6] = param.kd;
 		
 		bufMutex.unlock();
 
