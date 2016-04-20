@@ -212,27 +212,7 @@ int main(void)
 				{
 				case 0:
 					readFile(param);
-					outgoingBuffer[0] |= (1 << 5);
-					outgoingBuffer[0] |= (1 << 6);
 					//std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
-					break;
-				case 1:
-					bufMutex.lock();
-					outgoingBuffer[0] |= (1 << 3);
-					outgoingBuffer[4] = 1;
-					bufMutex.unlock();
-					break;
-				case 2:
-					bufMutex.lock();
-					outgoingBuffer[0] |= (1 << 3);
-					outgoingBuffer[4] = 0;
-					bufMutex.unlock();
-					break;
-				case 3:
-					bufMutex.lock();
-					outgoingBuffer[0] |= (1 << 3);
-					outgoingBuffer[4] = 2;
-					bufMutex.unlock();
 					break;
 				default:
 					break;
@@ -285,6 +265,24 @@ int main(void)
 		outgoingBuffer[1] = 120 + xboxcontroller.leftStickAngle();
 		outgoingBuffer[2] = 120 + xboxcontroller.triggerValue();
 		outgoingBuffer[3] = xboxcontroller.dpadYAxis();
+		
+		if (xboxcontroller.A_Pressed()) {
+			outgoingBuffer[0] |= (1 << 5);
+			outgoingBuffer[0] |= (1 << 6);
+		}
+		else if (xboxcontroller.B_Pressed()) {
+			outgoingBuffer[0] |= (1 << 3);
+			outgoingBuffer[4] = 1;
+		}
+		else if (xboxcontroller.X_Pressed()) {
+			outgoingBuffer[0] |= (1 << 3);
+			outgoingBuffer[4] = 0;
+		}
+		else if (xboxcontroller.Y_Pressed()) {
+			outgoingBuffer[0] |= (1 << 3);
+			outgoingBuffer[4] = 2;
+		}
+		
 		outgoingBuffer[5] = param.kp;
 		outgoingBuffer[6] = param.kd;
 		

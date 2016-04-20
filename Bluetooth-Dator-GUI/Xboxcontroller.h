@@ -19,6 +19,11 @@ public:
 	float triggerValue();
 	int dpadYAxis();
 
+	bool A_Pressed();
+	bool B_Pressed();
+	bool X_Pressed();
+	bool Y_Pressed();
+
 	float leftStickAngle();
 	float leftStickIntensity();
 	float rightStickAngle();

@@ -81,6 +81,22 @@ Xboxcontroller::Xboxcontroller(float xpos, float ypos, float width, float height
 
 }
 
+bool Xboxcontroller::A_Pressed() {
+	return A_pressed;
+}
+
+bool Xboxcontroller::B_Pressed() {
+	return B_pressed;
+}
+
+bool Xboxcontroller::X_Pressed() {
+	return X_pressed;
+}
+
+bool Xboxcontroller::Y_Pressed() {
+	return Y_pressed;
+}
+
 bool Xboxcontroller::leftLeverActive() {
 	if (left_lever_active) {
 		return true;
