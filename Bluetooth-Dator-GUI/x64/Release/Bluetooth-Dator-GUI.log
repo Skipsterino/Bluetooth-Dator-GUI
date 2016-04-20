@@ -1,0 +1,2 @@
+﻿AngleGraph.obj : error LNK2001: unresolved external symbol "__declspec(dllimport) public: __cdecl sf::Text::Text(class sf::Text &&)" (__imp_??0Text@sf@@QEAA@$$QEAV01@@Z)
+C:\Users\Joakim\Documents\git\Bluetooth-Dator-GUI\Bluetooth-Dator-GUI\x64\Release\Bluetooth-Dator-GUI.exe : fatal error LNK1120: 1 unresolved externals

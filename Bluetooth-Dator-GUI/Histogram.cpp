@@ -147,7 +147,12 @@ float Histogram::findHighestGraphPoint() {
 }
 
 void Histogram::updateHeight(float newHeight) {
+
+#ifdef _M_X64
+	unsigned __int64 iterations{ distTime.size() };
+#else
 	unsigned int iterations{ distTime.size() };
+#endif
 	for (auto i{ 0 }; i < iterations; ++i) {
 		graphPoints[i].second = ypos + height*(1 - distTime[i].first / newHeight);
 	}
