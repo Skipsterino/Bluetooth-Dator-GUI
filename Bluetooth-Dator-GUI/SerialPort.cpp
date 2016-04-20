@@ -13,9 +13,21 @@ SerialPort::~SerialPort() {
 	serialPortHandle = INVALID_HANDLE_VALUE;
 }
 
+#pragma warning(push)
+#pragma warning( disable : 4996)
+
 int SerialPort::connect(std::string& port) {
 
-	if (!connect(TEXT("COM5")))
+	//wchar_t* port_a[5];
+	//sprintf_s(port_a, port.c_str());
+
+
+
+	const size_t cSize = strlen(port.c_str()) + 1;
+	wchar_t* wc = new wchar_t[cSize];
+	mbstowcs(wc, port.c_str(), cSize);
+
+	if (!connect(wc))
 	{
 		std::cout << "Serial port connected!" << std::endl;
 		connected = true;
@@ -25,6 +37,8 @@ int SerialPort::connect(std::string& port) {
 	std::cout << "Error connecting to serial port!" << std::endl;
 	return false;
 }
+
+#pragma warning( pop )
 
 int SerialPort::connect(wchar_t* device) {
 	int error = 0;

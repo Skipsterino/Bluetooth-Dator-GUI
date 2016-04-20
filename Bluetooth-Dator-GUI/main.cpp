@@ -137,6 +137,8 @@ int main(void)
 	sf::Mutex bufMutex;
 	sf::Font font;
 
+	setlocale(LC_ALL, "");
+
 	//Ladda font
 	if (!font.loadFromFile("Fonts/arial.ttf")) {
 		std::cout << "Fonten är arg och inte laddas" << std::endl;
