@@ -95,7 +95,7 @@ bool Xboxcontroller::rightLeverActive() {
 }
 
 float Xboxcontroller::triggerValue() {
-	return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Z);
+	return -sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Z);
 }
 
 int Xboxcontroller::dpadYAxis() {
@@ -111,9 +111,9 @@ int Xboxcontroller::dpadYAxis() {
 float Xboxcontroller::leftStickAngle() {
 
 	if (left_lever_speed.x > 10 || left_lever_speed.x < -10) {
-		return 100 + left_lever_speed.x;
+		return left_lever_speed.x;
 	}
-	return 100;
+	return 0;
 }
 
 float Xboxcontroller::leftStickIntensity() {

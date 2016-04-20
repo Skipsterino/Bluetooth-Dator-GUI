@@ -282,8 +282,8 @@ int main(void)
 		if (xboxcontroller.dpadYAxis() != 0) {
 			outgoingBuffer[0] |= 4;
 		}
-		outgoingBuffer[1] = xboxcontroller.leftStickAngle();
-		outgoingBuffer[2] = 100 - xboxcontroller.triggerValue();
+		outgoingBuffer[1] = 120 + xboxcontroller.leftStickAngle();
+		outgoingBuffer[2] = 120 + xboxcontroller.triggerValue();
 		outgoingBuffer[3] = xboxcontroller.dpadYAxis();
 		outgoingBuffer[5] = param.kp;
 		outgoingBuffer[6] = param.kd;
@@ -291,7 +291,7 @@ int main(void)
 		bufMutex.unlock();
 
 		//Rita och sånt
-		window.clear(sf::Color(255, 255, 255));
+		window.clear(sf::Color::White);
 		xboxcontroller.draw(window);
 		timeHist.draw(window);
 		graphIR0.draw(window);
