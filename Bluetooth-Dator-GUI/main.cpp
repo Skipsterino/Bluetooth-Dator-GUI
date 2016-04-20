@@ -10,6 +10,7 @@
 #include "Histogram.h"
 #include "SerialPort.h"
 #include "AngleGraph.h"
+#include "StateChart.h"
 
 unsigned char incomingBuffer[17] = "";
 unsigned char outgoingBuffer[16] = "";
@@ -77,13 +78,13 @@ void bluetoothThread(Threadinfo& ti) {
 	std::cin >> port;
 
 	int packetCount = 0;
-
+	/*
 	while (!bluetoothPort.isConnected() && ti.running) {
 		std::cout << "Trying to connect..." << std::endl;
 		sf::sleep(sf::milliseconds(50));
 		bluetoothPort.connect(port);
 	}
-
+	*/
 	//C-hax för printing
 	unsigned char tempIncomingBuffer[17] = "";
 	tempIncomingBuffer[16] = '\0';
@@ -146,7 +147,7 @@ int main(void)
 
 	//Skapar alla grafer och andra grafiska objekt
 	Xboxcontroller xboxcontroller{ 70, 630, 300, 200 };
-	Histogram timeHist{ 100, 100, 600, 400, 10, &font , "Downtime" };
+	Histogram timeHist{ 30, 100, 600, 380, 10, &font , "Downtime" };
 	Histogram graphIR0{ 1250, 30, 300, 100, 10, &font , "IR0" };
 	Histogram graphIR1{ 1250, 170, 300, 100, 10 , &font , "IR1" };
 	Histogram graphIR2{ 1250, 310, 300, 100, 10 , &font , "IR2" };
@@ -155,10 +156,12 @@ int main(void)
 	Histogram graphIR5{ 1250, 730, 300, 100, 10 , &font , "IR5" };
 	Histogram graphIR6{ 900, 30, 300, 100, 10 , &font , "IR6" };
 	Histogram ultraljud{ 900, 170, 300, 100, 10 , &font , "Ultraljud" };
-	AngleGraph IRyaw{ 400, 650, 180, 180 , &font, "IR Yaw" };
-	AngleGraph IMUyaw{ 600, 650, 180, 180 , &font, "IMU Yaw"};
-	AngleGraph IMUroll{ 800, 650, 180, 180 , &font, "IMU Roll" };
-	AngleGraph IMUpitch{ 1000, 650, 180, 180 , &font, "IMU Pitch" };
+	AngleGraph IRyawR{ 660, 690, 180, 180 , &font, "IR Yaw Right" };
+	AngleGraph IRyawL{ 440, 690, 180, 180 , &font, "IR Yaw Left" };
+	AngleGraph IMUyaw{ 660, 30, 180, 180 , &font, "IMU Yaw"};
+	AngleGraph IMUroll{ 660, 250, 180, 180 , &font, "IMU Roll" };
+	AngleGraph IMUpitch{ 660, 470, 180, 180 , &font, "IMU Pitch" };
+	StateChart stateChart{ 915, 330, 300, 520, &font, "State Chart", 20 };
 
 	Parameters param;
 	readFile(param);
@@ -240,12 +243,12 @@ int main(void)
 			graphIR5.push(localBuffer[5]);
 			graphIR6.push(localBuffer[6]);
 			ultraljud.push(localBuffer[7]);
-			IRyaw.push(twoCompToDec(localBuffer[8], 8));
-			//IRyawhöger.push(bös);
-			//std::cout << (int)localBuffer[10] << ", " << (int)localBuffer[11] << ", " << localBuffer[10] + (localBuffer[11] << 8) << ", " << twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16) << std::endl;
+			IRyawL.push(twoCompToDec(localBuffer[8], 8));
+			IRyawL.push(twoCompToDec(localBuffer[9], 8));
 			IMUyaw.push(twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16));
 			IMUroll.push(twoCompToDec(localBuffer[12], 8));
 			IMUpitch.push(twoCompToDec(localBuffer[13], 8));
+			stateChart.push(localBuffer[14]);
 		}
 		else {
 			bufMutex.unlock();
@@ -262,10 +265,6 @@ int main(void)
 		if (xboxcontroller.dpadYAxis() != 0) {
 			outgoingBuffer[0] |= 4;
 		}
-		outgoingBuffer[1] = 120 + xboxcontroller.leftStickAngle();
-		outgoingBuffer[2] = 120 + xboxcontroller.triggerValue();
-		outgoingBuffer[3] = xboxcontroller.dpadYAxis();
-		
 		if (xboxcontroller.A_Pressed()) {
 			outgoingBuffer[0] |= (1 << 5);
 			outgoingBuffer[0] |= (1 << 6);
@@ -282,13 +281,14 @@ int main(void)
 			outgoingBuffer[0] |= (1 << 3);
 			outgoingBuffer[4] = 2;
 		}
-		
+		outgoingBuffer[1] = 120 + xboxcontroller.leftStickAngle();
+		outgoingBuffer[2] = 120 + xboxcontroller.triggerValue();
+		outgoingBuffer[3] = xboxcontroller.dpadYAxis();
 		outgoingBuffer[5] = param.kp;
 		outgoingBuffer[6] = param.kd;
-		
 		bufMutex.unlock();
 
-		//Rita och sånt
+		//Rita alla saker
 		window.clear(sf::Color::White);
 		xboxcontroller.draw(window);
 		timeHist.draw(window);
@@ -300,10 +300,12 @@ int main(void)
 		graphIR5.draw(window);
 		graphIR6.draw(window);
 		ultraljud.draw(window);
-		IRyaw.draw(window);
+		IRyawL.draw(window);
+		IRyawR.draw(window);
 		IMUyaw.draw(window);
 		IMUroll.draw(window);
 		IMUpitch.draw(window);
+		stateChart.draw(window);
 		window.display();
 
 		duration = sf::seconds(tickClock.getElapsedTime().asSeconds()) - timeOfLastUpdate;

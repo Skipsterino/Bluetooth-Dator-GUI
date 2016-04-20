@@ -85,7 +85,7 @@ Histogram::~Histogram()
 }
 
 void Histogram::push(float value) {
-	if (value == 0) {
+	if (value <= 0) {
 		return;
 	}
 	float curTime = timer.getElapsedTime().asSeconds();

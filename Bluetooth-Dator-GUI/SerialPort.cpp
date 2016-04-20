@@ -43,13 +43,7 @@ int SerialPort::connect(std::string& port) {
 int SerialPort::connect(wchar_t* device) {
 	int error = 0;
 	DCB dcb;
-	COMMTIMEOUTS timeouts;
-
-	timeouts.ReadIntervalTimeout = 200;
-	timeouts.WriteTotalTimeoutConstant = 200;
-	timeouts.ReadTotalTimeoutConstant = 200;
-	timeouts.ReadTotalTimeoutMultiplier = 200;
-	timeouts.WriteTotalTimeoutMultiplier = 200;
+	COMMTIMEOUTS timeouts = { 0, 0, 300, 0, 0}; //read constant 300, rest = 0 <=> not used.
 
 	memset(&dcb, 0, sizeof(dcb));
 
@@ -113,7 +107,7 @@ int SerialPort::getArray(unsigned char *buffer, int len) {
 		ReadFile(serialPortHandle, buffer, len, &read_nbr, NULL);
 		DWORD error = GetLastError();
 		if (error != ERROR_SUCCESS) {
-			connected = false;
+			disconnect();
 		}
 	}
 
