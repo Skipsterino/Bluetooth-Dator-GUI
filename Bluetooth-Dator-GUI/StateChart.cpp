@@ -12,6 +12,7 @@ StateChart::StateChart(float xpos, float ypos, float width, float height, sf::Fo
 	graphTitle{}
 {
 	//S?tter in alla tillst?nd i mappen
+	stateKeyMap.emplace(0, "dummystate0");
 	stateKeyMap.emplace(1, "dummystate1");
 	stateKeyMap.emplace(2, "dummystate2");
 	stateKeyMap.emplace(3, "dummystate3");
