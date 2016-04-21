@@ -78,17 +78,17 @@ void bluetoothThread(Threadinfo& ti) {
 	std::cin >> port;
 
 	int packetCount = 0;
-	/*
+
 	while (!bluetoothPort.isConnected() && ti.running) {
 		std::cout << "Trying to connect..." << std::endl;
 		sf::sleep(sf::milliseconds(50));
 		bluetoothPort.connect(port);
 	}
-	*/
+
 	//C-hax för printing
 	unsigned char tempIncomingBuffer[17] = "";
 	tempIncomingBuffer[16] = '\0';
-
+	unsigned int checksum{ 0 };
 	while (ti.running) {
 
 		while (!bluetoothPort.isConnected()) {
@@ -109,8 +109,13 @@ void bluetoothThread(Threadinfo& ti) {
 
 		packetCount++;
 		std::cout << "Data mottagen: " << packetCount * 16 << " Bytes (" << packetCount << " paket)" << std::endl;
-
+		
 		ti.bufMutex.lock();
+		checksum = 0;
+		for (int i{ 0 }; i < 15; ++i) {
+			checksum += outgoingBuffer[i];
+		}
+		outgoingBuffer[15] = checksum & 0x000000FF;
 
 		std::cout << "Sending buffer" << std::endl;
 		std::cout << (int)outgoingBuffer[0] << ", " << (int)outgoingBuffer[1] << ", " << (int)outgoingBuffer[2] << std::endl;
@@ -158,7 +163,7 @@ int main(void)
 	Histogram ultraljud{ 900, 170, 300, 100, 10 , &font , "Ultraljud" };
 	AngleGraph IRyawR{ 660, 690, 180, 180 , &font, "IR Yaw Right" };
 	AngleGraph IRyawL{ 440, 690, 180, 180 , &font, "IR Yaw Left" };
-	AngleGraph IMUyaw{ 660, 30, 180, 180 , &font, "IMU Yaw"};
+	AngleGraph IMUyaw{ 660, 30, 180, 180 , &font, "IMU Yaw" };
 	AngleGraph IMUroll{ 660, 250, 180, 180 , &font, "IMU Roll" };
 	AngleGraph IMUpitch{ 660, 470, 180, 180 , &font, "IMU Pitch" };
 	StateChart stateChart{ 915, 330, 300, 520, &font, "State Chart", 20 };
@@ -202,7 +207,7 @@ int main(void)
 					break;
 				case sf::Keyboard::L:
 					readFile(param);
-					//std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
+					std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
 					break;
 				case sf::Keyboard::C:
 					stateChart.clear();
@@ -218,7 +223,7 @@ int main(void)
 				{
 				case 0:
 					readFile(param);
-					//std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
+					std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
 					break;
 				default:
 					break;
@@ -247,7 +252,7 @@ int main(void)
 			graphIR6.push(localBuffer[6]);
 			ultraljud.push(localBuffer[7]);
 			IRyawL.push(twoCompToDec(localBuffer[8], 8));
-			IRyawL.push(twoCompToDec(localBuffer[9], 8));
+			IRyawR.push(twoCompToDec(localBuffer[9], 8));
 			IMUyaw.push(twoCompToDec(localBuffer[10] + (localBuffer[11] << 8), 16));
 			IMUroll.push(twoCompToDec(localBuffer[12], 8));
 			IMUpitch.push(twoCompToDec(localBuffer[13], 8));
@@ -259,7 +264,7 @@ int main(void)
 
 		//std::cout << xboxcontroller.leftStickAngle() << std::endl;
 		//std::cout << 100 - sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Z) << std::endl;
-		
+
 		//Skicka data data
 		bufMutex.lock();
 		if (xboxcontroller.leftLeverActive() || (int)xboxcontroller.triggerValue() != 0) {
