@@ -12,22 +12,45 @@ StateChart::StateChart(float xpos, float ypos, float width, float height, sf::Fo
 	graphTitle{}
 {
 	//S?tter in alla tillst?nd i mappen
-	stateKeyMap.emplace(0, "dummystate0");
-	stateKeyMap.emplace(1, "dummystate1");
-	stateKeyMap.emplace(2, "dummystate2");
-	stateKeyMap.emplace(3, "dummystate3");
-	stateKeyMap.emplace(4, "dummystate4");
-	stateKeyMap.emplace(5, "dummystate5");
-	stateKeyMap.emplace(6, "dummystate6");
-	stateKeyMap.emplace(7, "dummystate7");
-	stateKeyMap.emplace(8, "dummystate8");
-	stateKeyMap.emplace(9, "dummystate9");
-	stateKeyMap.emplace(10, "dummystate10");
-	stateKeyMap.emplace(11, "dummystate11");
-	stateKeyMap.emplace(12, "dummystate12");
-	stateKeyMap.emplace(13, "dummystate13");
-	stateKeyMap.emplace(14, "dummystate14");
-	stateKeyMap.emplace(15, "dummystate15");
+	//stateKeyMap.emplace(0, "dummystate0"); Använd inte state 0
+	stateKeyMap.emplace(1, "Corridor");
+	stateKeyMap.emplace(2, "Out of corridor");
+	stateKeyMap.emplace(3, "Out of corridor left wall");
+	stateKeyMap.emplace(4, "Out of corridor right wall");
+	stateKeyMap.emplace(5, "Into high obstacle");
+	stateKeyMap.emplace(6, "Into low obstacle");
+	stateKeyMap.emplace(7, "Into turn right");
+	stateKeyMap.emplace(8, "Into turn left");
+	stateKeyMap.emplace(9, "Into junction A right");
+	stateKeyMap.emplace(10, "Into junction A left");
+	stateKeyMap.emplace(11, "Turn right");
+	stateKeyMap.emplace(12, "Turn left");
+	stateKeyMap.emplace(13, "Junction A left");
+	stateKeyMap.emplace(14, "Junction A right");
+	stateKeyMap.emplace(15, "Junction B left");
+	stateKeyMap.emplace(16, "Junction B right");
+	stateKeyMap.emplace(17, "Junction C left");
+	stateKeyMap.emplace(18, "Junction C right");
+	stateKeyMap.emplace(19, "Dead end");
+	stateKeyMap.emplace(20, "Mid dead end");
+
+	stateKeyMap.emplace(21, "High obstacle");
+	stateKeyMap.emplace(22, "Low obstacle");
+	stateKeyMap.emplace(23, "Crawling out of high obstacle");
+	stateKeyMap.emplace(24, "Crawling out of low obstacle");
+	stateKeyMap.emplace(25, "Climb up");
+	stateKeyMap.emplace(26, "Out of turn right");
+	stateKeyMap.emplace(27, "Out of turn left");
+	stateKeyMap.emplace(28, "Out of junction A right");
+	stateKeyMap.emplace(29, "Out of junction A left");
+	stateKeyMap.emplace(30, "Out of junction C right");
+	stateKeyMap.emplace(31, "Out of junction C left");
+	stateKeyMap.emplace(32, "Out of high obstacle");
+	stateKeyMap.emplace(33, "Out of low obstacle");
+	stateKeyMap.emplace(34, "End of course");
+	stateKeyMap.emplace(35, "Stop");
+
+
 
 	//v?nster lodr?t linje
 	graphLines.push_back(new sf::Vertex[2]{
@@ -59,6 +82,12 @@ StateChart::~StateChart(){
 
 void StateChart::push(int key){
 	//Kollar s? nyckeln finns och att det inte ?r samma som f?rra
+
+	if (!key)
+	{
+		return;
+	}
+
 	if (stateKeyMap.count(key) == 0) {
 		std::cout << "KAN INTE HITTA TILLST?NDET \'" << key << "\', L?S!" << std::endl;
 		return;
