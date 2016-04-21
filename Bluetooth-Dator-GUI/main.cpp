@@ -204,6 +204,9 @@ int main(void)
 					readFile(param);
 					//std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
 					break;
+				case sf::Keyboard::C:
+					stateChart.clear();
+					break;
 				default:
 					break;
 				}

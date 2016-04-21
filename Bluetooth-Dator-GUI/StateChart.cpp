@@ -128,3 +128,8 @@ void StateChart::draw(sf::RenderWindow& window){
 
 }
 
+void StateChart::clear()
+{
+	stateTexts.clear();
+}
+

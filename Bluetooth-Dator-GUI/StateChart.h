@@ -17,6 +17,7 @@ public:
 
 	void push(int);
 	void draw(sf::RenderWindow&);
+	void clear();
 private:
 	int lastKey;
 	std::vector<sf::Vertex*> graphLines;
