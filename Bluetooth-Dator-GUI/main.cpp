@@ -279,15 +279,15 @@ int main(void)
 		}
 		else if (xboxcontroller.B_Pressed()) {
 			outgoingBuffer[0] |= (1 << 3);
-			outgoingBuffer[4] = 1;
+			outgoingBuffer[4] = 0b00111100;
 		}
 		else if (xboxcontroller.X_Pressed()) {
 			outgoingBuffer[0] |= (1 << 3);
-			outgoingBuffer[4] = 0;
+			outgoingBuffer[4] = 0b00001111;
 		}
 		else if (xboxcontroller.Y_Pressed()) {
 			outgoingBuffer[0] |= (1 << 3);
-			outgoingBuffer[4] = 2;
+			outgoingBuffer[4] = 0b11110000;
 		}
 		outgoingBuffer[1] = 120 + xboxcontroller.leftStickAngle();
 		outgoingBuffer[2] = 120 + xboxcontroller.triggerValue();
