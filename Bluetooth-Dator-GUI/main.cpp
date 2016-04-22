@@ -139,6 +139,7 @@ int main(void)
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	sf::RenderWindow window(sf::VideoMode(1600, 900, 64), "SpiderPig Control Center", sf::Style::Default, settings); //F?nstret hanteras som om det vore 1600x900 hela tiden.
+	window.setPosition(sf::Vector2i(10, 10));
 	sf::Event e;
 	sf::Mutex bufMutex;
 	sf::Font font;
