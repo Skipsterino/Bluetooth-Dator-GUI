@@ -274,8 +274,8 @@ int main(void)
 			outgoingBuffer[0] |= 4;
 		}
 		if (xboxcontroller.A_Pressed()) {
+			outgoingBuffer[0] |= (1 << 4);
 			outgoingBuffer[0] |= (1 << 5);
-			outgoingBuffer[0] |= (1 << 6);
 		}
 		else if (xboxcontroller.B_Pressed()) {
 			outgoingBuffer[0] |= (1 << 3);
