@@ -14,7 +14,7 @@ StateChart::StateChart(float xpos, float ypos, float width, float height, sf::Fo
 	//S?tter in alla tillst?nd i mappen
 	//stateKeyMap.emplace(0, "dummystate0"); Använd inte state 0
 	stateKeyMap.emplace(1, "Corridor");
-	stateKeyMap.emplace(2, "Out of corridor");
+	stateKeyMap.emplace(2, "Out of corridor no wall");
 	stateKeyMap.emplace(3, "Out of corridor left wall");
 	stateKeyMap.emplace(4, "Out of corridor right wall");
 	stateKeyMap.emplace(5, "Into high obstacle");
@@ -25,19 +25,19 @@ StateChart::StateChart(float xpos, float ypos, float width, float height, sf::Fo
 	stateKeyMap.emplace(10, "Into junction A left");
 	stateKeyMap.emplace(11, "Turn right");
 	stateKeyMap.emplace(12, "Turn left");
-	stateKeyMap.emplace(13, "Junction A left");
-	stateKeyMap.emplace(14, "Junction A right");
-	stateKeyMap.emplace(15, "Junction B left");
-	stateKeyMap.emplace(16, "Junction B right");
-	stateKeyMap.emplace(17, "Junction C left");
-	stateKeyMap.emplace(18, "Junction C right");
+	stateKeyMap.emplace(13, "Junction A right");
+	stateKeyMap.emplace(14, "Junction A left");
+	stateKeyMap.emplace(15, "Junction B right");
+	stateKeyMap.emplace(16, "Junction B left");
+	stateKeyMap.emplace(17, "Junction C right");
+	stateKeyMap.emplace(18, "Junction C left");
 	stateKeyMap.emplace(19, "Dead end");
 	stateKeyMap.emplace(20, "Mid dead end");
 
 	stateKeyMap.emplace(21, "High obstacle");
 	stateKeyMap.emplace(22, "Low obstacle");
 	stateKeyMap.emplace(23, "Crawling out of high obstacle");
-	stateKeyMap.emplace(24, "Crawling out of low obstacle");
+	stateKeyMap.emplace(24, "Crawling under high obstacle");
 	stateKeyMap.emplace(25, "Climb up");
 	stateKeyMap.emplace(26, "Out of turn right");
 	stateKeyMap.emplace(27, "Out of turn left");
@@ -49,6 +49,9 @@ StateChart::StateChart(float xpos, float ypos, float width, float height, sf::Fo
 	stateKeyMap.emplace(33, "Out of low obstacle");
 	stateKeyMap.emplace(34, "End of course");
 	stateKeyMap.emplace(35, "Stop");
+	stateKeyMap.emplace(36, "Into junction C right");
+	stateKeyMap.emplace(37, "Into junction C left");
+	stateKeyMap.emplace(38, "Into corridor no wall");
 
 
 
