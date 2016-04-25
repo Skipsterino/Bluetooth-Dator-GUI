@@ -86,7 +86,7 @@ StateChart::~StateChart(){
 void StateChart::push(int key){
 	//Kollar s? nyckeln finns och att det inte ?r samma som f?rra
 
-	if (!key)
+	if (!key || key == lastKey)
 	{
 		return;
 	}
@@ -95,9 +95,7 @@ void StateChart::push(int key){
 		std::cout << "KAN INTE HITTA TILLST?NDET \'" << key << "\', L?S!" << std::endl;
 		return;
 	}
-	if (key == lastKey) {
-		return;
-	}
+
 	lastKey = key;
 
 	//Skapar och s?tter in nya texten i textvektorn
