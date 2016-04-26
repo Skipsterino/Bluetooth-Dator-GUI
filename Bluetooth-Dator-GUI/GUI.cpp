@@ -26,12 +26,9 @@ GUI::GUI(sf::Font& font) :
 	stateChart{ 915, 330, 300, 520, &font, "State Chart", 20 }
 {
 	//Skapar f?nster, variabler osv
-	localMainBuffer = new unsigned char[16];
-	incomingBuffer = new unsigned char[17];
-	outgoingBuffer = new unsigned char[16];
-	memset(localMainBuffer, 0, sizeof(localMainBuffer));
-	memset(incomingBuffer, 0, sizeof(incomingBuffer));
-	memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
+	localMainBuffer = new unsigned char[16]{0};
+	incomingBuffer = new unsigned char[17]{0};
+	outgoingBuffer = new unsigned char[16]{0};
 
 	settings.antialiasingLevel = 8;
 	//F?nstret hanteras som om det vore 1600x900 hela tiden.
@@ -64,6 +61,7 @@ GUI::~GUI()
 
 void GUI::run()
 {
+
 	running = true;
 	//Tr?d k?rs
 	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer};
@@ -296,7 +294,8 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 
 	int packetCount = 0;
 
-	while (!bluetoothPort.isConnected() && ti.running) {
+	while (!bluetoothPort.isConnected() && ti.running) 
+	{
 		std::cout << "Trying to connect..." << std::endl;
 		sf::sleep(sf::milliseconds(50));
 		bluetoothPort.connect(port);
@@ -308,19 +307,22 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 	unsigned int checksum{ 0 };
 	while (ti.running) {
 
-		while (!bluetoothPort.isConnected()) {
+		while (!bluetoothPort.isConnected()) 
+		{
 			std::cout << "Disconnected!!\n" << "Trying to connect..." << std::endl;
 			sf::sleep(sf::milliseconds(50));
 			bluetoothPort.connect(port);
 		}
 
-		if (bluetoothPort.getArray(tempIncomingBuffer, 16)) {
+		if (bluetoothPort.getArray(tempIncomingBuffer, 16))
+		{
 
 			ti.bufMutex.lock();
 			std::memcpy(ti.incomingBuffer, tempIncomingBuffer, sizeof(tempIncomingBuffer));
 			ti.bufMutex.unlock();
 		}
-		else {
+		else 
+		{
 			continue;
 		}
 
