@@ -3,6 +3,9 @@
 
 
 GUI::GUI(sf::Font& font) :
+	localMainBuffer{ new unsigned char[16] },
+	incomingBuffer{new unsigned char[17]},
+	outgoingBuffer{ new unsigned char[16] },
 	timeOfLastUpdate{ sf::Time::Zero },
 	duration{ sf::Time::Zero },
 	frameTime{ sf::seconds(1.f / UPS) },
@@ -25,10 +28,6 @@ GUI::GUI(sf::Font& font) :
 	IMUpitch{ 660, 470, 180, 180 , &font, "IMU Pitch" },
 	stateChart{ 915, 330, 300, 520, &font, "State Chart", 20 }
 {
-	//Skapar f?nster, variabler osv
-	localMainBuffer = new unsigned char[16]{0};
-	incomingBuffer = new unsigned char[17]{0};
-	outgoingBuffer = new unsigned char[16]{0};
 
 	settings.antialiasingLevel = 8;
 	//F?nstret hanteras som om det vore 1600x900 hela tiden.
@@ -61,7 +60,9 @@ GUI::~GUI()
 
 void GUI::run()
 {
-
+	std::memset(localMainBuffer, 0, sizeof(localMainBuffer));
+	std::memset(incomingBuffer, 0, sizeof(incomingBuffer));
+	std::memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
 	running = true;
 	//Tr?d k?rs
 	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer};
@@ -164,8 +165,8 @@ void GUI::grabAndPushIncoming()
 	bufMutex.lock();
 	if (incomingBuffer[0] != 0)
 	{
-		memcpy(localMainBuffer, incomingBuffer, sizeof(incomingBuffer));
-		memset(incomingBuffer, 0, sizeof(incomingBuffer));
+		std::memcpy(localMainBuffer, incomingBuffer, 16);
+		std::memset(incomingBuffer, 0, sizeof(incomingBuffer));
 		bufMutex.unlock();
 		//Hantera data
 		graphIR0.push(localMainBuffer[0]);
@@ -316,9 +317,8 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 
 		if (bluetoothPort.getArray(tempIncomingBuffer, 16))
 		{
-
 			ti.bufMutex.lock();
-			std::memcpy(ti.incomingBuffer, tempIncomingBuffer, sizeof(tempIncomingBuffer));
+			std::memcpy(ti.incomingBuffer, tempIncomingBuffer, 16);
 			ti.bufMutex.unlock();
 		}
 		else 
