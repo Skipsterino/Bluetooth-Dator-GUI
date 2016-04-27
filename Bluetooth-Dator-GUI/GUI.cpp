@@ -69,14 +69,20 @@ void GUI::run()
 	sf::Thread btThread(&GUI::bluetoothThread, ti);
 	btThread.launch();
 	sf::Event e;
-
+	uint8_t lastState{ 0 };
 	while (running) {
 
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
 
 		xboxcontroller.update();
 		pollEvent(e);
+		lastState = localMainBuffer[14];
 		grabAndPushIncoming();
+		if (mode == RACE && lastState != localMainBuffer[14]) {
+			mode = AUTO;
+			modeCircle.setFillColor(sf::Color::Red);
+			modeText.setString("Auto");
+		}
 		pushOutgoing();
 		draw();
 
@@ -182,11 +188,6 @@ void GUI::grabAndPushIncoming()
 		IMUyaw.push(twoCompToDec(localMainBuffer[10] + (localMainBuffer[11] << 8), 16));
 		IMUpitch.push(twoCompToDec(localMainBuffer[12], 8));
 		IMUroll.push(twoCompToDec(localMainBuffer[13], 8));
-		if (mode == RACE && localMainBuffer[14] != 0) {
-			mode = AUTO;
-			modeCircle.setFillColor(sf::Color::Red);
-			modeText.setString("Auto");
-		}
 		stateChart.push(localMainBuffer[14]);
 	}
 	else {
