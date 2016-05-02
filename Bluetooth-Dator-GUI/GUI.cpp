@@ -1,5 +1,5 @@
 #include "GUI.h"
-
+#include <SFML/OpenGL.hpp>
 
 
 GUI::GUI(sf::Font& font) :
@@ -30,6 +30,7 @@ GUI::GUI(sf::Font& font) :
 {
 
 	settings.antialiasingLevel = 8;
+	settings.depthBits = 24;
 	//F?nstret hanteras som om det vore 1600x900 hela tiden.
 	window.create(sf::VideoMode(1600, 900, 64), "SpiderPig Control Center", sf::Style::Default, settings);
 	window.setPosition(sf::Vector2i(10, 10));
@@ -64,6 +65,98 @@ void GUI::run()
 	std::memset(incomingBuffer, 0, sizeof(incomingBuffer));
 	std::memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
 	running = true;
+
+
+	{
+		window.setActive();
+
+		// Load an OpenGL texture.
+		GLuint texture = 0;
+		{
+			sf::Image image;
+			if (!image.loadFromFile("Bilder/metalTexture3.jpg"))
+				return;
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		}
+
+		// Enable Z-buffer read and write
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+		glClearDepth(1.f);
+		glDisable(GL_LIGHTING);
+		glViewport(0, 0, window.getSize().x, window.getSize().y);
+
+		// Setup a perspective projection
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		GLfloat ratio = static_cast<float>(window.getSize().x) / window.getSize().y;
+		glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+
+		// Bind the texture
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		// Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
+		static const GLfloat cube[] =
+		{
+			// positions    // texture coordinates
+			-2, -0.5, -2,  0, 0,
+			-2,  0.5, -2,  1, 0,
+			-2, -0.5,  2,  0, 1,
+			-2, -0.5,  2,  0, 1,
+			-2,  0.5, -2,  1, 0,
+			-2,  0.5,  2,  1, 1,
+
+			2, -0.5, -2,  0, 0,
+			2,  0.5, -2,  1, 0,
+			2, -0.5,  2,  0, 1,
+			2, -0.5,  2,  0, 1,
+			2,  0.5, -2,  1, 0,
+			2,  0.5,  2,  1, 1,
+
+			-2, -0.5, -2,  0, 0,
+			2, -0.5, -2,  1, 0,
+			-2, -0.5,  2,  0, 1,
+			-2, -0.5,  2,  0, 1,
+			2, -0.5, -2,  1, 0,
+			2, -0.5,  2,  1, 1,
+
+			-2,  0.5, -2,  0, 0,
+			2,  0.5, -2,  1, 0,
+			-2,  0.5,  2,  0, 1,
+			-2,  0.5,  2,  0, 1,
+			2,  0.5, -2,  1, 0,
+			2,  0.5,  2,  1, 1,
+
+			-2, -0.5, -2,  0, 0,
+			2, -0.5, -2,  1, 0,
+			-2,  0.5, -2,  0, 1,
+			-2,  0.5, -2,  0, 1,
+			2, -0.5, -2,  1, 0,
+			2,  0.5, -2,  1, 1,
+
+			-2, -0.5,  2,  0, 0,
+			2, -0.5,  2,  1, 0,
+			-2,  0.5,  2,  0, 1,
+			-2,  0.5,  2,  0, 1,
+			2, -0.5,  2,  1, 0,
+			2,  0.5,  2,  1, 1
+		};
+
+		// Enable position and texture coordinates vertex components
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 5 * sizeof(GLfloat), cube);
+		glTexCoordPointer(2, GL_FLOAT, 5 * sizeof(GLfloat), cube + 3);
+
+		// Disable normal and color vertex components
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
+	}
 	//Tr?d k?rs
 	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer};
 	sf::Thread btThread(&GUI::bluetoothThread, ti);
@@ -96,6 +189,7 @@ void GUI::run()
 
 void GUI::draw()
 {
+	window.pushGLStates();
 	window.clear(sf::Color::White);
 	xboxcontroller.draw(window);
 	timeHist.draw(window);
@@ -115,6 +209,23 @@ void GUI::draw()
 	stateChart.draw(window);
 	window.draw(modeCircle);
 	window.draw(modeText);
+	window.popGLStates();
+
+	// Clear the depth buffer
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	// Apply some transformations
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glScalef(10.f, 10.f, 1.f);
+	glTranslatef(400.f, 400.f, -100.f);
+	glRotatef((float)twoCompToDec(localMainBuffer[12], 8), 1.f, 0.f, 0.f);
+	glRotatef((float)twoCompToDec(localMainBuffer[10] + (localMainBuffer[11] << 8), 16), 0.f, 1.f, 0.f);
+	glRotatef((float)twoCompToDec(localMainBuffer[13], 8), 0.f, 0.f, 1.f);
+	
+
+	// Draw the cube
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	window.display();
 }
 
@@ -160,6 +271,9 @@ void GUI::pollEvent(sf::Event& e)
 				break;
 			}
 			break;
+		case sf::Event::Resized:
+				glViewport(0, 0, e.size.width, e.size.height);
+				break;
 		default:
 			break;
 		}
