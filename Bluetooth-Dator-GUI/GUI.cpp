@@ -218,10 +218,10 @@ void GUI::draw()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glScalef(10.f, 10.f, 1.f);
-	glTranslatef(400.f, 400.f, -100.f);
-	glRotatef((float)twoCompToDec(localMainBuffer[12], 8), 1.f, 0.f, 0.f);
+	glTranslatef(-8.f, -3.f, -100.f);
+	glRotatef((float)twoCompToDec(localMainBuffer[13], 8), 1.f, 0.f, 0.f);
 	glRotatef((float)twoCompToDec(localMainBuffer[10] + (localMainBuffer[11] << 8), 16), 0.f, 1.f, 0.f);
-	glRotatef((float)twoCompToDec(localMainBuffer[13], 8), 0.f, 0.f, 1.f);
+	glRotatef((float)twoCompToDec(localMainBuffer[12], 8), 0.f, 0.f, 1.f);
 	
 
 	// Draw the cube
