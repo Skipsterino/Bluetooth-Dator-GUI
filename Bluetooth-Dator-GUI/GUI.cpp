@@ -38,7 +38,7 @@ GUI::GUI(sf::Font& font) :
 	sf::Image icon;
 	if (icon.loadFromFile("Bilder/icon.png"))
 	{
-		window_.setIcon(32,32,icon.getPixelsPtr());
+		window.setIcon(32,32,icon.getPixelsPtr());
 	}
 	
 	setlocale(LC_ALL, "");
