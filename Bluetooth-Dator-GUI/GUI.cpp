@@ -34,7 +34,13 @@ GUI::GUI(sf::Font& font) :
 	//F?nstret hanteras som om det vore 1600x900 hela tiden.
 	window.create(sf::VideoMode(1600, 900, 64), "SpiderPig Control Center", sf::Style::Default, settings);
 	window.setPosition(sf::Vector2i(10, 10));
-
+	
+	sf::Image icon;
+	if (icon.loadFromFile("Bilder/icon.png"))
+	{
+		window_.setIcon(32,32,icon.getPixelsPtr());
+	}
+	
 	setlocale(LC_ALL, "");
 
 	//Mode-visar-cirkel och text
@@ -417,7 +423,7 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 		bluetoothPort.connect(port);
 	}
 
-	//C-hax för printing
+	//C-hax fÃ¶r printing
 	unsigned char tempIncomingBuffer[17] = "";
 	tempIncomingBuffer[16] = '\0';
 	unsigned int checksum{ 0 };
