@@ -36,7 +36,7 @@ GUI::GUI(sf::Font& font) :
 	window.setPosition(sf::Vector2i(10, 10));
 	
 	sf::Image icon;
-	if (icon.loadFromFile("Bilder/icon.png"))
+	if (icon.loadFromFile("Bilder/spig_small.png"))
 	{
 		window.setIcon(32,32,icon.getPixelsPtr());
 	}
