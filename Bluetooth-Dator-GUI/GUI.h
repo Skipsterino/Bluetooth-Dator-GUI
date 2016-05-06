@@ -28,6 +28,7 @@ struct Threadinfo {
 	sf::Mutex& bufMutex;
 	unsigned char*& outgoingBuffer;
 	unsigned char*& incomingBuffer;
+	HWND& windowHandle;
 };
 
 struct Parameters {
@@ -77,7 +78,7 @@ private:
 	StateChart stateChart;
 	sf::CircleShape modeCircle;
 	sf::Text modeText;
-
+	HWND windowHandle;
 	MODE mode;
 
 	//Funktioner
@@ -86,7 +87,7 @@ private:
 	int decToTwoComp8b(int);
 	int twoCompToDec(int twoComp, int bits);
 	void draw();
-	void pollEvent(sf::Event&);
+	void pollEvent(sf::Event&, sf::Thread&);
 	void grabAndPushIncoming();
 	void pushOutgoing();
 	void sleepTimeLeft();

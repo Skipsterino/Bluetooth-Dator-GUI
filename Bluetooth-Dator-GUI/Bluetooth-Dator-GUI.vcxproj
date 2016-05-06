@@ -167,6 +167,7 @@
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Histogram.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="SerialPort.cpp" />
     <ClCompile Include="StateChart.cpp" />
     <ClCompile Include="Xboxcontroller.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="AngleGraph.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Histogram.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="SerialPort.h" />
     <ClInclude Include="StateChart.h" />
     <ClInclude Include="Xboxcontroller.h" />

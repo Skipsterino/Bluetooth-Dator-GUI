@@ -11,6 +11,7 @@ GUI::GUI(sf::Font& font) :
 	frameTime{ sf::seconds(1.f / UPS) },
 	running{ false },
 	mode{ DUNNO },
+	windowHandle{NULL},
 	xboxcontroller {70, 630, 300, 200},
 	timeHist{ 30, 100, 600, 380, 10, &font , "Downtime" },
 	graphIR0{ 1250, 30, 300, 100, 10, &font , "IR0" },
@@ -28,7 +29,6 @@ GUI::GUI(sf::Font& font) :
 	IMUpitch{ 660, 470, 180, 180 , &font, "IMU Pitch" },
 	stateChart{ 915, 330, 300, 520, &font, "State Chart", 20 }
 {
-
 	settings.antialiasingLevel = 8;
 	settings.depthBits = 24;
 	//F?nstret hanteras som om det vore 1600x900 hela tiden.
@@ -54,7 +54,6 @@ GUI::GUI(sf::Font& font) :
 	modeCircle.setFillColor(sf::Color::White);
 	modeCircle.setRadius(15);
 	modeCircle.setPosition(sf::Vector2f(370, 700));
-
 }
 
 
@@ -67,11 +66,10 @@ GUI::~GUI()
 
 void GUI::run()
 {
-	std::memset(localMainBuffer, 0, sizeof(localMainBuffer));
-	std::memset(incomingBuffer, 0, sizeof(incomingBuffer));
-	std::memset(outgoingBuffer, 0, sizeof(outgoingBuffer));
+	std::memset(localMainBuffer, 0, 16);
+	std::memset(incomingBuffer, 0, 16);
+	std::memset(outgoingBuffer, 0, 16);
 	running = true;
-
 
 	{
 		window.setActive();
@@ -164,24 +162,28 @@ void GUI::run()
 		glDisableClientState(GL_COLOR_ARRAY);
 	}
 	//Tr?d k?rs
-	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer};
+	windowHandle = GetForegroundWindow();
+	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer, windowHandle};
 	sf::Thread btThread(&GUI::bluetoothThread, ti);
 	btThread.launch();
 	sf::Event e;
 	uint8_t lastState{ 0 };
+	ShowWindow(windowHandle, SW_MINIMIZE);
+
 	while (running) {
 
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
 
 		xboxcontroller.update();
-		pollEvent(e);
 		lastState = localMainBuffer[14];
+
 		grabAndPushIncoming();
 		if (mode == RACE && lastState != localMainBuffer[14]) {
 			mode = AUTO;
 			modeCircle.setFillColor(sf::Color::Red);
 			modeText.setString("Auto");
 		}
+		pollEvent(e, btThread);
 		pushOutgoing();
 		draw();
 
@@ -225,17 +227,16 @@ void GUI::draw()
 	glLoadIdentity();
 	glScalef(10.f, 10.f, 1.f);
 	glTranslatef(-8.f, -3.f, -100.f);
+	glRotatef(-(float)twoCompToDec(localMainBuffer[10] + (localMainBuffer[11] << 8), 16), 0.f, 1.f, 0.f);
 	glRotatef((float)twoCompToDec(localMainBuffer[13], 8), 1.f, 0.f, 0.f);
-	glRotatef((float)twoCompToDec(localMainBuffer[10] + (localMainBuffer[11] << 8), 16), 0.f, 1.f, 0.f);
-	glRotatef((float)twoCompToDec(localMainBuffer[12], 8), 0.f, 0.f, 1.f);
-	
+	glRotatef((float)twoCompToDec(localMainBuffer[12], 8), 0.f, 0.f, 1.f);	
 
 	// Draw the cube
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	window.display();
 }
 
-void GUI::pollEvent(sf::Event& e)
+void GUI::pollEvent(sf::Event& e, sf::Thread& btThread)
 {
 	while (window.pollEvent(e)) {
 
@@ -259,6 +260,38 @@ void GUI::pollEvent(sf::Event& e)
 				break;
 			case sf::Keyboard::C:
 				stateChart.clear();
+				break;
+			case sf::Keyboard::R:
+				ShowWindow(windowHandle, SW_MINIMIZE);
+				btThread.terminate();
+				btThread.launch();
+				break;
+			case sf::Keyboard::A:
+				readFile(param);
+				std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
+				outgoingBuffer[0] |= (1 << 4);
+				outgoingBuffer[0] |= (1 << 5);
+				break;
+			case sf::Keyboard::B:
+				outgoingBuffer[0] |= (1 << 3);
+				outgoingBuffer[4] = 0b00111100;
+				mode = AUTO;
+				modeCircle.setFillColor(sf::Color::Red);
+				modeText.setString("Auto");
+				break;
+			case sf::Keyboard::X:
+				outgoingBuffer[0] |= (1 << 3);
+				outgoingBuffer[4] = 0b00001111;
+				mode = MANUAL;
+				modeCircle.setFillColor(sf::Color::Blue);
+				modeText.setString("Manual");
+				break;
+			case sf::Keyboard::Y:
+				outgoingBuffer[0] |= (1 << 3);
+				outgoingBuffer[4] = 0b11110000;
+				mode = RACE;
+				modeCircle.setFillColor(sf::Color::Yellow);
+				modeText.setString("Race");
 				break;
 			default:
 				break;
@@ -422,6 +455,9 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 		sf::sleep(sf::milliseconds(50));
 		bluetoothPort.connect(port);
 	}
+
+	ShowWindow(ti.windowHandle, SW_RESTORE);
+	SetFocus(ti.windowHandle);
 
 	//C-hax för printing
 	unsigned char tempIncomingBuffer[17] = "";
