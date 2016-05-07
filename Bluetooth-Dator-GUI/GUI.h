@@ -29,6 +29,7 @@ struct Threadinfo {
 	unsigned char*& outgoingBuffer;
 	unsigned char*& incomingBuffer;
 	HWND& windowHandle;
+	SerialPort& bluetoothPort;
 };
 
 struct Parameters {
@@ -80,6 +81,7 @@ private:
 	sf::Text modeText;
 	HWND windowHandle;
 	MODE mode;
+	SerialPort bluetoothPort;
 
 	//Funktioner
 	static void bluetoothThread(Threadinfo&);

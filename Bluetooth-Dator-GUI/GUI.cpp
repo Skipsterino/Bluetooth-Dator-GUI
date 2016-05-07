@@ -12,6 +12,7 @@ GUI::GUI(sf::Font& font) :
 	running{ false },
 	mode{ DUNNO },
 	windowHandle{NULL},
+	bluetoothPort{},
 	xboxcontroller {70, 630, 300, 200},
 	timeHist{ 30, 100, 600, 380, 10, &font , "Downtime" },
 	graphIR0{ 1250, 30, 300, 100, 10, &font , "IR0" },
@@ -163,7 +164,7 @@ void GUI::run()
 	}
 	//Tr?d k?rs
 	windowHandle = GetForegroundWindow();
-	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer, windowHandle};
+	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer, windowHandle, bluetoothPort};
 	sf::Thread btThread(&GUI::bluetoothThread, ti);
 	btThread.launch();
 	sf::Event e;
@@ -264,34 +265,43 @@ void GUI::pollEvent(sf::Event& e, sf::Thread& btThread)
 			case sf::Keyboard::R:
 				ShowWindow(windowHandle, SW_MINIMIZE);
 				btThread.terminate();
+				bluetoothPort.disconnect();
 				btThread.launch();
 				break;
 			case sf::Keyboard::A:
+				bufMutex.lock();
 				readFile(param);
 				std::cout << (int)param.kp << " " << (int)param.kd << std::endl;
 				outgoingBuffer[0] |= (1 << 4);
 				outgoingBuffer[0] |= (1 << 5);
+				bufMutex.unlock();
 				break;
 			case sf::Keyboard::B:
+				bufMutex.lock();
 				outgoingBuffer[0] |= (1 << 3);
 				outgoingBuffer[4] = 0b00111100;
 				mode = AUTO;
 				modeCircle.setFillColor(sf::Color::Red);
 				modeText.setString("Auto");
+				bufMutex.unlock();
 				break;
 			case sf::Keyboard::X:
+				bufMutex.lock();
 				outgoingBuffer[0] |= (1 << 3);
 				outgoingBuffer[4] = 0b00001111;
 				mode = MANUAL;
 				modeCircle.setFillColor(sf::Color::Blue);
 				modeText.setString("Manual");
+				bufMutex.unlock();
 				break;
 			case sf::Keyboard::Y:
+				bufMutex.lock();
 				outgoingBuffer[0] |= (1 << 3);
 				outgoingBuffer[4] = 0b11110000;
 				mode = RACE;
 				modeCircle.setFillColor(sf::Color::Yellow);
 				modeText.setString("Race");
+				bufMutex.unlock();
 				break;
 			default:
 				break;
@@ -441,19 +451,17 @@ void GUI::readFile(Parameters& param)
 
 void GUI::bluetoothThread(Threadinfo& ti) {
 
-	SerialPort bluetoothPort;
-
 	std::string port = "";
 	std::cout << "Enter COM port: ";
 	std::cin >> port;
 
 	int packetCount = 0;
 
-	while (!bluetoothPort.isConnected() && ti.running) 
+	while (!ti.bluetoothPort.isConnected() && ti.running) 
 	{
 		std::cout << "Trying to connect..." << std::endl;
 		sf::sleep(sf::milliseconds(50));
-		bluetoothPort.connect(port);
+		ti.bluetoothPort.connect(port);
 	}
 
 	ShowWindow(ti.windowHandle, SW_RESTORE);
@@ -465,14 +473,14 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 	unsigned int checksum{ 0 };
 	while (ti.running) {
 
-		while (!bluetoothPort.isConnected()) 
+		while (!ti.bluetoothPort.isConnected()) 
 		{
 			std::cout << "Disconnected!!\n" << "Trying to connect..." << std::endl;
 			sf::sleep(sf::milliseconds(50));
-			bluetoothPort.connect(port);
+			ti.bluetoothPort.connect(port);
 		}
 
-		if (bluetoothPort.getArray(tempIncomingBuffer, 16))
+		if (ti.bluetoothPort.getArray(tempIncomingBuffer, 16))
 		{
 			ti.bufMutex.lock();
 			std::memcpy(ti.incomingBuffer, tempIncomingBuffer, 16);
@@ -493,16 +501,16 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 		}
 		ti.outgoingBuffer[15] = checksum & 0x000000FF;
 		
-		std::cout << "Sending buffer" << std::endl;
-		std::cout << (int)ti.outgoingBuffer[0] << ", " << (int)ti.outgoingBuffer[1] << ", " << (int)ti.outgoingBuffer[2] << std::endl;
-		bluetoothPort.sendArray(ti.outgoingBuffer, 16);
+		std::cout << "Sending buffer, here is first byte: ";
+		std::cout << (int)ti.outgoingBuffer[0] << std::endl;
+		ti.bluetoothPort.sendArray(ti.outgoingBuffer, 16);
 		memset(ti.outgoingBuffer, 0, sizeof(outgoingBuffer));
 
 		ti.bufMutex.unlock();
 
 	}
 
-	bluetoothPort.disconnect();
+	ti.bluetoothPort.disconnect();
 
 	std::cout << "Stopping reading thread" << std::endl;
 }

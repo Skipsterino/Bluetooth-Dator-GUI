@@ -11,43 +11,71 @@ StateChart::StateChart(float xpos, float ypos, float width, float height, sf::Fo
 	numberOfItems{numberOfItems},
 	graphTitle{}
 {
-	//S?tter in alla tillst?nd i mappen
-	//stateKeyMap.emplace(0, "dummystate0"); Använd inte state 0
+	//S?tter in alla tillst?nd i mappen, skippa 0 pls
 	stateKeyMap.emplace(1, "Stop");
 	stateKeyMap.emplace(2, "Dead End");
 	stateKeyMap.emplace(3, "Corridor");
-	stateKeyMap.emplace(4, "Out of corridor no wall");
+
+	stateKeyMap.emplace(4, "Out of corridor right wall");
 	stateKeyMap.emplace(5, "Out of corridor left wall");
-	stateKeyMap.emplace(6, "Out of corridor right wall");
-	stateKeyMap.emplace(7, "Into high obstacle");
-	stateKeyMap.emplace(8, "Crawling under high obstacle");
-	stateKeyMap.emplace(9, "Into low obstacle");
-	stateKeyMap.emplace(10, "Climbing up");
-	stateKeyMap.emplace(11, "Low obstacle");
-	stateKeyMap.emplace(12, "Climbing down");
-	stateKeyMap.emplace(13, "Into junction A right");
-	stateKeyMap.emplace(14, "Into junction A left");
+	stateKeyMap.emplace(6, "Out of corridor no wall");
 
-	
-	stateKeyMap.emplace(15, "Turn right");
-	stateKeyMap.emplace(16, "Turn left");
-	stateKeyMap.emplace(17, "Junction A right");
-	stateKeyMap.emplace(18, "Junction A left");
-	stateKeyMap.emplace(19, "Junction B right");
-	stateKeyMap.emplace(20, "Junction B left");
-	stateKeyMap.emplace(21, "Junction C right");
-	stateKeyMap.emplace(22, "Junction C left");
-	stateKeyMap.emplace(23, "End of course");
-	
-	stateKeyMap.emplace(24, "Out of turn right");
-	stateKeyMap.emplace(25, "Out of turn left");
-	stateKeyMap.emplace(26, "Out of junction A");
-	stateKeyMap.emplace(27, "Out of junction A right");
-	stateKeyMap.emplace(28, "Out of junction A left");
-	stateKeyMap.emplace(29, "Out of junction C right");
-	stateKeyMap.emplace(30, "Out of junction C left");
+	stateKeyMap.emplace(7, "Left wall");
+	stateKeyMap.emplace(8, "Right wall");
+	stateKeyMap.emplace(9, "No wall");
 
+	stateKeyMap.emplace(10, "Determine junction right wall");
+	stateKeyMap.emplace(11, "Determine junction left wall");
+	stateKeyMap.emplace(12, "Determine junction no wall");
 
+	stateKeyMap.emplace(13, "Out of junction right wall");
+	stateKeyMap.emplace(14, "Out of junction left wall");
+	stateKeyMap.emplace(15, "Out of junction no wall");
+
+	stateKeyMap.emplace(16, "Into corridor no wall");
+
+	stateKeyMap.emplace(17, "Into high obstacle");
+	stateKeyMap.emplace(18, "Crawling under high obstacle");
+
+	stateKeyMap.emplace(19, "Prepare climbing up");
+	stateKeyMap.emplace(20, "Climbing up");
+	stateKeyMap.emplace(21, "Low obstacle");
+	stateKeyMap.emplace(22, "Prepare climbing down");
+	stateKeyMap.emplace(23, "Climbing down");
+
+	stateKeyMap.emplace(24, "Turn right");
+	stateKeyMap.emplace(25, "Turn left");
+
+	stateKeyMap.emplace(26, "Junction A right");
+	stateKeyMap.emplace(27, "Junction A left");
+	stateKeyMap.emplace(28, "Junction B right");
+	stateKeyMap.emplace(29, "Junction B left");
+	stateKeyMap.emplace(30, "Junction C right");
+	stateKeyMap.emplace(31, "Junction C left");
+	stateKeyMap.emplace(32, "Junction D right");
+	stateKeyMap.emplace(33, "Junction D left");
+	stateKeyMap.emplace(34, "Junction D straight");
+	stateKeyMap.emplace(35, "Junction E right");
+	stateKeyMap.emplace(36, "Junction E left");
+	stateKeyMap.emplace(37, "Junction F");
+	stateKeyMap.emplace(38, "Junction G");
+	stateKeyMap.emplace(39, "Junction H right");
+	stateKeyMap.emplace(40, "Junction H left");
+	stateKeyMap.emplace(41, "Junction I");
+
+	stateKeyMap.emplace(42, "Junction I or end");
+	stateKeyMap.emplace(43, "End of course");
+
+	stateKeyMap.emplace(44, "Test state 1");
+	stateKeyMap.emplace(45, "Test state 2");
+	stateKeyMap.emplace(46, "Test state 3");
+	stateKeyMap.emplace(47, "Test state 4");
+	stateKeyMap.emplace(48, "Test state 5");
+	stateKeyMap.emplace(49, "Test state 6");
+	stateKeyMap.emplace(50, "Test state 7");
+	stateKeyMap.emplace(51, "Test state 8");
+	stateKeyMap.emplace(52, "Test state 9");
+	stateKeyMap.emplace(53, "Test state 10");
 
 	//v?nster lodr?t linje
 	graphLines.push_back(new sf::Vertex[2]{
@@ -105,7 +133,7 @@ void StateChart::push(int key){
 		stateTexts.pop_back();
 	}
 
-	//uppdaterar alla koordinater f?r textvektorn
+	//uppdaterar alla koordinater f?r texterna
 	for (int i{ 0 }; i < stateTexts.size(); ++i) {
 		stateTexts[i].setPosition(sf::Vector2f(xpos + width / 50, ypos + height / (2 * numberOfItems) - stateTexts[i].getLocalBounds().height/ 1.5 + i * height / numberOfItems));
 	}
