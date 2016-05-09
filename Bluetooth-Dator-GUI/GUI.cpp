@@ -372,6 +372,9 @@ void GUI::pushOutgoing()
 	if (xboxcontroller.dpadYAxis() != 0) {
 		outgoingBuffer[0] |= 4;
 	}
+	if (xboxcontroller.dpadYAxis() != 0) {
+		outgoingBuffer[0] |= (1 << 6);
+	}
 	if (xboxcontroller.A_Pressed()) {
 		outgoingBuffer[0] |= (1 << 4);
 		outgoingBuffer[0] |= (1 << 5);
@@ -402,6 +405,7 @@ void GUI::pushOutgoing()
 	outgoingBuffer[3] = xboxcontroller.dpadYAxis();
 	outgoingBuffer[5] = param.kp;
 	outgoingBuffer[6] = param.kd;
+	outgoingBuffer[7] = xboxcontroller.dpadXAxis();
 	bufMutex.unlock();
 }
 

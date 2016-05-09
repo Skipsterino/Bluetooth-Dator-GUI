@@ -124,6 +124,16 @@ int Xboxcontroller::dpadYAxis() {
 	return 0;
 }
 
+int Xboxcontroller::dpadXAxis() {
+	if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovX) == 100) {
+		return 2;
+	}
+	else if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovX) == -100) {
+		return 1;
+	}
+	return 0;
+}
+
 float Xboxcontroller::leftStickAngle() {
 
 	if (left_lever_speed.x > 10 || left_lever_speed.x < -10) {

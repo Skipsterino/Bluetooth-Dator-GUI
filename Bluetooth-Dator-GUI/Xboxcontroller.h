@@ -18,6 +18,7 @@ public:
 	bool rightLeverActive();
 	float triggerValue();
 	int dpadYAxis();
+	int dpadXAxis();
 
 	bool A_Pressed();
 	bool B_Pressed();
