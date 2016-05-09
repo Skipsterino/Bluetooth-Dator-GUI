@@ -29,7 +29,7 @@ GUI::GUI(sf::Font& font) :
 	IMUroll{ 660, 250, 180, 180 , &font, "IMU Roll" },
 	IMUpitch{ 660, 470, 180, 180 , &font, "IMU Pitch" },
 	stateChart{ 915, 330, 300, 520, &font, "State Chart", 20 },
-	map{15, 30, 620, 450, 15, 14, &font, "Labyrinth map"}
+	map{15, 30, 620, 450, 21, 17, &font, "Labyrinth map"}
 {
 	settings.antialiasingLevel = 8;
 	settings.depthBits = 24;

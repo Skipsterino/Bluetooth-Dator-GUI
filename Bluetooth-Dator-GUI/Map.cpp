@@ -14,7 +14,7 @@ Map::Map(float xpos, float ypos, float width, float height, uint8_t gridWidth, u
 	robotShape{},
 	direction{ UP },
 	mapLines{},
-	curGridPos{gridWidth / 2, gridHeight - 1},
+	curGridPos{gridWidth / 2, 3 * (gridHeight - 1) / 4},
 	lastState{0}
 {
 	//Skapar en 3D-vektor stor nog att h?lla i kartan
