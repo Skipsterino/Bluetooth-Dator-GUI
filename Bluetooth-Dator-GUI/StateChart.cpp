@@ -66,15 +66,15 @@ StateChart::StateChart(float xpos, float ypos, float width, float height, sf::Fo
 	stateKeyMap.emplace(42, "Junction I or end");
 	stateKeyMap.emplace(43, "End of course");
 
-	stateKeyMap.emplace(44, "Test state 1");
-	stateKeyMap.emplace(45, "Test state 2");
-	stateKeyMap.emplace(46, "Test state 3");
-	stateKeyMap.emplace(47, "Test state 4");
-	stateKeyMap.emplace(48, "Test state 5");
-	stateKeyMap.emplace(49, "Test state 6");
-	stateKeyMap.emplace(50, "Test state 7");
-	stateKeyMap.emplace(51, "Test state 8");
-	stateKeyMap.emplace(52, "Test state 9");
+	stateKeyMap.emplace(44, "Slow corridor");
+	stateKeyMap.emplace(45, "Dead end A right");
+	stateKeyMap.emplace(46, "Dead end A left");
+	stateKeyMap.emplace(47, "Dead end B right");
+	stateKeyMap.emplace(48, "Dead end B left");
+	stateKeyMap.emplace(49, "Dead end C");
+	stateKeyMap.emplace(50, "Dead end D");
+	stateKeyMap.emplace(51, "Check if low obstacle");
+	stateKeyMap.emplace(52, "Check if high obstacle");
 	stateKeyMap.emplace(53, "Test state 10");
 
 	//v?nster lodr?t linje
@@ -103,6 +103,9 @@ StateChart::StateChart(float xpos, float ypos, float width, float height, sf::Fo
 }
 
 StateChart::~StateChart(){
+	for (auto& i : graphLines) {
+		delete[] i;
+	}
 }
 
 void StateChart::push(int key){

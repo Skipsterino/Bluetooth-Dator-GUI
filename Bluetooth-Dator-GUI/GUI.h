@@ -15,6 +15,7 @@
 #include "SerialPort.h"
 #include "AngleGraph.h"
 #include "StateChart.h"
+#include "Map.h"
 
 #define UPS 30.f
 enum MODE{
@@ -62,7 +63,7 @@ private:
 	sf::RenderWindow window;
 
 	Xboxcontroller xboxcontroller;
-	Histogram timeHist;
+	//Histogram timeHist;
 	Histogram graphIR0;
 	Histogram graphIR1;
 	Histogram graphIR2;
@@ -77,6 +78,7 @@ private:
 	AngleGraph IMUroll;
 	AngleGraph IMUpitch;
 	StateChart stateChart;
+	Map map;
 	sf::CircleShape modeCircle;
 	sf::Text modeText;
 	HWND windowHandle;

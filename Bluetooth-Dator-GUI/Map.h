@@ -5,13 +5,13 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <utility>
+#include <iostream>
 
 enum DIRECTION {
-	LEFT,
 	UP,
 	RIGHT,
 	DOWN,
-	STRAIGHT
+	LEFT
 };
 
 typedef enum {
@@ -76,8 +76,8 @@ typedef enum {
 	DEAD_END_B_LEFT = 48,		// TEST_STATE_5
 	DEAD_END_C = 49,			// TEST_STATE_6
 	DEAD_END_D = 50,			// TEST_STATE_7
-	TEST_STATE_8 = 51,
-	TEST_STATE_9 = 52,
+	CHECK_IF_LOW_OBSTACLE = 51,
+	CHECK_IF_HIGH_OBSTACLE = 52,
 	TEST_STATE_10 = 53,
 } STATES;
 
@@ -88,7 +88,7 @@ public:
 	Map(float, float, float, float, uint8_t, uint8_t, sf::Font*, std::string = "");
 	~Map();
 
-	void push(float);
+	void push(uint8_t);
 	void draw(sf::RenderWindow&);
 	void clear();
 private:
@@ -102,13 +102,23 @@ private:
 	const float height;
 	const std::pair <uint8_t, uint8_t> gridSize;
 	sf::Font* fontPtr;
-
+	sf::CircleShape robotShape;
 	DIRECTION direction;
-	std::vector<std::vector<sf::Vertex*> > mapGrid;
+	std::vector<std::vector<std::vector<sf::Vertex*> > > mapLines;
 	std::pair <uint8_t, uint8_t> curGridPos;
+	uint8_t lastState;
 
 	//Funktioner
 	void moveInDir();
+	void rotateCW();
+	void rotateCCW();
+
+	void basicDrawLine(uint8_t, uint8_t, DIRECTION);
+	void basicDrawWall(DIRECTION);
+	void basicDrawDeadEnd(DIRECTION);
+	void basicDrawCorridor(DIRECTION);
+	void drawDeadEnd();
+	void drawCorridor();
 	void drawTurn(DIRECTION);
 	void drawJunctionA(DIRECTION);
 	void drawJunctionB(DIRECTION);

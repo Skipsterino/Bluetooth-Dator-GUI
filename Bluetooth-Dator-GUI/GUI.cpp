@@ -14,7 +14,7 @@ GUI::GUI(sf::Font& font) :
 	windowHandle{NULL},
 	bluetoothPort{},
 	xboxcontroller {70, 630, 300, 200},
-	timeHist{ 30, 100, 600, 380, 10, &font , "Downtime" },
+	//timeHist{ 30, 100, 600, 380, 10, &font , "Downtime" },
 	graphIR0{ 1250, 30, 300, 100, 10, &font , "IR0" },
 	graphIR1{ 1250, 170, 300, 100, 10 , &font , "IR1" },
 	graphIR2{ 1250, 310, 300, 100, 10 , &font , "IR2" },
@@ -28,7 +28,8 @@ GUI::GUI(sf::Font& font) :
 	IMUyaw{ 660, 30, 180, 180 , &font, "IMU Yaw" },
 	IMUroll{ 660, 250, 180, 180 , &font, "IMU Roll" },
 	IMUpitch{ 660, 470, 180, 180 , &font, "IMU Pitch" },
-	stateChart{ 915, 330, 300, 520, &font, "State Chart", 20 }
+	stateChart{ 915, 330, 300, 520, &font, "State Chart", 20 },
+	map{15, 30, 620, 450, 15, 14, &font, "Labyrinth map"}
 {
 	settings.antialiasingLevel = 8;
 	settings.depthBits = 24;
@@ -187,10 +188,11 @@ void GUI::run()
 		pollEvent(e, btThread);
 		pushOutgoing();
 		draw();
-
+		/*
 		duration = sf::seconds(tickClock.getElapsedTime().asSeconds()) - timeOfLastUpdate;
 		sleepTimeLeft();
 		timeHist.push(100 * (1 - duration / frameTime));
+		*/	
 	}
 
 	btThread.wait();
@@ -201,7 +203,7 @@ void GUI::draw()
 	window.pushGLStates();
 	window.clear(sf::Color::White);
 	xboxcontroller.draw(window);
-	timeHist.draw(window);
+	//timeHist.draw(window);
 	graphIR0.draw(window);
 	graphIR1.draw(window);
 	graphIR2.draw(window);
@@ -216,6 +218,7 @@ void GUI::draw()
 	IMUroll.draw(window);
 	IMUpitch.draw(window);
 	stateChart.draw(window);
+	map.draw(window);
 	window.draw(modeCircle);
 	window.draw(modeText);
 	window.popGLStates();
@@ -261,6 +264,7 @@ void GUI::pollEvent(sf::Event& e, sf::Thread& btThread)
 				break;
 			case sf::Keyboard::C:
 				stateChart.clear();
+				map.clear();
 				break;
 			case sf::Keyboard::R:
 				ShowWindow(windowHandle, SW_MINIMIZE);
@@ -352,6 +356,7 @@ void GUI::grabAndPushIncoming()
 		IMUpitch.push(twoCompToDec(localMainBuffer[12], 8));
 		IMUroll.push(twoCompToDec(localMainBuffer[13], 8));
 		stateChart.push(localMainBuffer[14]);
+		map.push(localMainBuffer[14]);
 	}
 	else {
 		bufMutex.unlock();
