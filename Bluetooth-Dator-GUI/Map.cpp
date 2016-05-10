@@ -72,11 +72,18 @@ Map::~Map()
 	for (auto& i : graphLines) {
 		delete[] i;
 	}
+	for (auto& i : mapLines) {
+		for (auto& j : i) {
+			for (auto& k : j) {
+				delete[] k;
+			}
+		}
+	}
 }
 
 void Map::push(uint8_t stateNum)
 {
-	if (stateNum == CORRIDOR && stateNum == lastState && corridorTimer.getElapsedTime().asSeconds() >= 4) {
+	if ((stateNum == CORRIDOR || stateNum == SLOW_CORRIDOR) && stateNum == lastState && corridorTimer.getElapsedTime().asSeconds() >= 5) {
 		moveInDir();
 		drawCorridor();
 		corridorTimer.restart();
@@ -89,6 +96,7 @@ void Map::push(uint8_t stateNum)
 
 	switch (stateNum)
 	{
+	case SLOW_CORRIDOR:
 	case CORRIDOR:
 		moveInDir();
 		drawCorridor();
@@ -96,10 +104,14 @@ void Map::push(uint8_t stateNum)
 		lastState = stateNum;
 		break;
 	case CRAWLING_UNDER_HIGH_OBSTACLE:
-		//ATT G?RAS
+		moveInDir();
+		drawHighObst();
+		lastState = stateNum;
 		break;
 	case LOW_OBSTACLE:
-		//ATT G?RAS
+		moveInDir();
+		drawLowObst();
+		lastState = stateNum;
 		break;
 	case DEAD_END:
 		moveInDir();
@@ -234,12 +246,21 @@ void Map::clear()
 {
 	for (auto& i : mapLines) {
 		for (auto& j : i) {
-			j.clear();
+			for (auto& k : j) {
+				delete[] k;
+			}
 		}
 	}
-	curGridPos = {gridSize.first / 2, gridSize.second - 1};
+	curGridPos = {gridSize.first / 2, 3*(gridSize.second - 1)/4};
 	direction = UP;
 	robotShape.setPosition(xpos + width / (2 * gridSize.first) + curGridPos.first * width / gridSize.first, ypos + height / (2 * gridSize.second) + curGridPos.second * height / gridSize.second);
+}
+
+void Map::empty(uint8_t xGridPos, uint8_t yGridPos)
+{
+	for (auto& i : mapLines[xGridPos][yGridPos]) {
+		delete[] i;
+	}
 }
 
 void Map::moveInDir()
@@ -313,6 +334,10 @@ void Map::rotateCCW()
 
 void Map::basicDrawLine(uint8_t xGridPos, uint8_t yGridPos, DIRECTION dir)
 {
+	if (xGridPos >= gridSize.first || yGridPos >= gridSize.second) {
+		clear();
+		return;
+	}
 	switch (dir)
 	{
 	case UP:
@@ -402,9 +427,73 @@ void Map::basicDrawCorridor(DIRECTION dir)
 	}
 }
 
+void Map::drawHighObst()
+{
+	switch (direction)
+	{
+	case UP:
+	case DOWN:
+		mapLines[curGridPos.first][curGridPos.second].push_back(new sf::Vertex[2]{
+			sf::Vertex(sf::Vector2f(xpos + curGridPos.first * width / gridSize.first, ypos + curGridPos.second * height / gridSize.second), sf::Color::Green),
+			sf::Vertex(sf::Vector2f(xpos + curGridPos.first * width / gridSize.first, ypos + (1+curGridPos.second) * height / gridSize.second), sf::Color::Green)
+		});
+		mapLines[curGridPos.first][curGridPos.second].push_back(new sf::Vertex[2]{
+			sf::Vertex(sf::Vector2f(xpos + (1 + curGridPos.first) * width / gridSize.first, ypos + curGridPos.second * height / gridSize.second), sf::Color::Green),
+			sf::Vertex(sf::Vector2f(xpos + (1 + curGridPos.first) * width / gridSize.first, ypos + (1+curGridPos.second) * height / gridSize.second), sf::Color::Green)
+		});
+		break;
+	case RIGHT:
+	case LEFT:
+		mapLines[curGridPos.first][curGridPos.second].push_back(new sf::Vertex[2]{
+			sf::Vertex(sf::Vector2f(xpos + curGridPos.first * width / gridSize.first, ypos + curGridPos.second * height / gridSize.second), sf::Color::Green),
+			sf::Vertex(sf::Vector2f(xpos + (1 + curGridPos.first) * width / gridSize.first, ypos + curGridPos.second * height / gridSize.second), sf::Color::Green)
+		});
+		mapLines[curGridPos.first][curGridPos.second].push_back(new sf::Vertex[2]{
+			sf::Vertex(sf::Vector2f(xpos + curGridPos.first * width / gridSize.first, ypos + (1 + curGridPos.second) * height / gridSize.second), sf::Color::Green),
+			sf::Vertex(sf::Vector2f(xpos + (1 + curGridPos.first) * width / gridSize.first, ypos + (1 + curGridPos.second) * height / gridSize.second), sf::Color::Green)
+		});
+		break;
+	default:
+		std::cout << "Hit i drawHighObst ska vi inte komma" << std::endl;
+		break;
+	}
+}
+
+void Map::drawLowObst()
+{
+	switch (direction)
+	{
+	case UP:
+	case DOWN:
+		mapLines[curGridPos.first][curGridPos.second].push_back(new sf::Vertex[2]{
+			sf::Vertex(sf::Vector2f(xpos + curGridPos.first * width / gridSize.first, ypos + curGridPos.second * height / gridSize.second), sf::Color::Yellow),
+			sf::Vertex(sf::Vector2f(xpos + curGridPos.first * width / gridSize.first, ypos + (1 + curGridPos.second) * height / gridSize.second), sf::Color::Yellow)
+		});
+		mapLines[curGridPos.first][curGridPos.second].push_back(new sf::Vertex[2]{
+			sf::Vertex(sf::Vector2f(xpos + (1 + curGridPos.first) * width / gridSize.first, ypos + curGridPos.second * height / gridSize.second), sf::Color::Yellow),
+			sf::Vertex(sf::Vector2f(xpos + (1 + curGridPos.first) * width / gridSize.first, ypos + (1 + curGridPos.second) * height / gridSize.second), sf::Color::Yellow)
+		});
+		break;
+	case RIGHT:
+	case LEFT:
+		mapLines[curGridPos.first][curGridPos.second].push_back(new sf::Vertex[2]{
+			sf::Vertex(sf::Vector2f(xpos + curGridPos.first * width / gridSize.first, ypos + curGridPos.second * height / gridSize.second), sf::Color::Yellow),
+			sf::Vertex(sf::Vector2f(xpos + (1 + curGridPos.first) * width / gridSize.first, ypos + curGridPos.second * height / gridSize.second), sf::Color::Yellow)
+		});
+		mapLines[curGridPos.first][curGridPos.second].push_back(new sf::Vertex[2]{
+			sf::Vertex(sf::Vector2f(xpos + curGridPos.first * width / gridSize.first, ypos + (1 + curGridPos.second) * height / gridSize.second), sf::Color::Yellow),
+			sf::Vertex(sf::Vector2f(xpos + (1 + curGridPos.first) * width / gridSize.first, ypos + (1 + curGridPos.second) * height / gridSize.second), sf::Color::Yellow)
+		});
+		break;
+	default:
+		std::cout << "Hit i drawLowObst ska vi inte komma" << std::endl;
+		break;
+	}
+}
+
 void Map::drawDeadEnd()
 {
-	mapLines[curGridPos.first][curGridPos.second].clear();
+	empty(curGridPos.first, curGridPos.second);
 	basicDrawLine(curGridPos.first, curGridPos.second, direction);
 	basicDrawLine(curGridPos.first, curGridPos.second, (DIRECTION)((direction + 1) % 4));
 	basicDrawLine(curGridPos.first, curGridPos.second, (DIRECTION)((direction + 3) % 4));
@@ -412,7 +501,7 @@ void Map::drawDeadEnd()
 
 void Map::drawCorridor()
 {
-	mapLines[curGridPos.first][curGridPos.second].clear();
+	empty(curGridPos.first, curGridPos.second);
 	basicDrawWall(RIGHT);
 	basicDrawWall(LEFT);
 }
@@ -420,12 +509,12 @@ void Map::drawCorridor()
 void Map::drawTurn(DIRECTION dir)
 {	
 	if (dir == LEFT) {
-		mapLines[curGridPos.first][curGridPos.second].clear();
+		empty(curGridPos.first, curGridPos.second);
 		basicDrawWall(UP);
 		basicDrawWall(RIGHT);
 	}
 	else if (dir == RIGHT) {
-		mapLines[curGridPos.first][curGridPos.second].clear();
+		empty(curGridPos.first, curGridPos.second);
 		basicDrawWall(UP);
 		basicDrawWall(LEFT);
 	}

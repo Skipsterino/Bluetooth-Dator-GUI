@@ -109,6 +109,8 @@ private:
 	uint8_t lastState;
 
 	//Funktioner
+	void empty(uint8_t, uint8_t);
+
 	void moveInDir();
 	void rotateCW();
 	void rotateCCW();
@@ -117,6 +119,8 @@ private:
 	void basicDrawWall(DIRECTION);
 	void basicDrawDeadEnd(DIRECTION);
 	void basicDrawCorridor(DIRECTION);
+	void drawHighObst();
+	void drawLowObst();
 	void drawDeadEnd();
 	void drawCorridor();
 	void drawTurn(DIRECTION);
