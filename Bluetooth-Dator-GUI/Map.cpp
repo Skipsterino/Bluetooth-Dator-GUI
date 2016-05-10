@@ -25,7 +25,7 @@ Map::Map(float xpos, float ypos, float width, float height, uint8_t gridWidth, u
 
 	//Fixar inst?llningar till robotcirkeln
 	robotShape.setRadius(width / (6 * gridWidth));
-	robotShape.setFillColor(sf::Color(192, 192, 192));
+	robotShape.setFillColor(sf::Color(255,192,203));
 	robotShape.setOutlineThickness(2);
 	robotShape.setOutlineColor(sf::Color::Black);
 	robotShape.setOrigin(robotShape.getRadius(), robotShape.getRadius());
@@ -249,6 +249,7 @@ void Map::clear()
 			for (auto& k : j) {
 				delete[] k;
 			}
+			j.clear();
 		}
 	}
 	curGridPos = {gridSize.first / 2, 3*(gridSize.second - 1)/4};
@@ -261,6 +262,7 @@ void Map::empty(uint8_t xGridPos, uint8_t yGridPos)
 	for (auto& i : mapLines[xGridPos][yGridPos]) {
 		delete[] i;
 	}
+	mapLines[xGridPos][yGridPos].clear();
 }
 
 void Map::moveInDir()
