@@ -102,13 +102,17 @@ private:
 	const float height;
 	const std::pair <uint8_t, uint8_t> gridSize;
 	sf::Font* fontPtr;
+
+	sf::CircleShape directionIndicator;
 	sf::CircleShape robotShape;
+
 	DIRECTION direction;
 	std::vector<std::vector<std::vector<sf::Vertex*> > > mapLines;
 	std::pair <uint8_t, uint8_t> curGridPos;
 	uint8_t lastState;
 
 	//Funktioner
+	void updateRobotIndicator();
 	void empty(uint8_t, uint8_t);
 
 	void moveInDir();
