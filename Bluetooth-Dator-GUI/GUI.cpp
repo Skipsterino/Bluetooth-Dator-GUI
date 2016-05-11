@@ -58,7 +58,6 @@ GUI::GUI(sf::Font& font) :
 	modeCircle.setPosition(sf::Vector2f(370, 700));
 }
 
-
 GUI::~GUI()
 {
 	delete[] localMainBuffer;
@@ -73,6 +72,7 @@ void GUI::run()
 	std::memset(outgoingBuffer, 0, 16);
 	running = true;
 
+	//OpenGL-inställningar och definitioner
 	{
 		window.setActive();
 
@@ -163,6 +163,7 @@ void GUI::run()
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_COLOR_ARRAY);
 	}
+
 	//Tr?d k?rs
 	windowHandle = GetForegroundWindow();
 	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer, windowHandle, bluetoothPort};
@@ -188,11 +189,9 @@ void GUI::run()
 		pollEvent(e, btThread);
 		pushOutgoing();
 		draw();
-		/*
-		duration = sf::seconds(tickClock.getElapsedTime().asSeconds()) - timeOfLastUpdate;
+
 		sleepTimeLeft();
-		timeHist.push(100 * (1 - duration / frameTime));
-		*/	
+
 	}
 
 	btThread.wait();
@@ -356,7 +355,7 @@ void GUI::grabAndPushIncoming()
 		IMUpitch.push(twoCompToDec(localMainBuffer[12], 8));
 		IMUroll.push(twoCompToDec(localMainBuffer[13], 8));
 		stateChart.push(localMainBuffer[14]);
-		map.push(localMainBuffer[14]);
+		map.push(localMainBuffer[14], mode);
 	}
 	else {
 		bufMutex.unlock();
@@ -372,7 +371,7 @@ void GUI::pushOutgoing()
 	if (xboxcontroller.dpadYAxis() != 0) {
 		outgoingBuffer[0] |= 4;
 	}
-	if (xboxcontroller.dpadYAxis() != 0) {
+	if (xboxcontroller.dpadXAxis() != 0) {
 		outgoingBuffer[0] |= (1 << 6);
 	}
 	if (xboxcontroller.A_Pressed()) {
@@ -411,6 +410,8 @@ void GUI::pushOutgoing()
 
 void GUI::sleepTimeLeft()
 {
+	duration = sf::seconds(tickClock.getElapsedTime().asSeconds()) - timeOfLastUpdate;
+
 	if (duration < frameTime) {
 		sf::sleep(frameTime - duration);
 	}

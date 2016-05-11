@@ -87,19 +87,26 @@ Map::~Map()
 	}
 }
 
-void Map::push(uint8_t stateNum)
+void Map::push(uint8_t stateNum, MODE mode)
 {
-	if ((stateNum == CORRIDOR || stateNum == SLOW_CORRIDOR) && stateNum == lastState && corridorTimer.getElapsedTime().asSeconds() >= 4) {
-		moveInDir();
-		drawCorridor();
+	if (mode != AUTO) {
 		corridorTimer.restart();
 		return;
 	}
 
-	if (stateNum == lastState || stateNum == 0 ) {
-		return;
+	if ((stateNum == CORRIDOR || stateNum == SLOW_CORRIDOR) &&
+		(lastState == CORRIDOR || lastState == SLOW_CORRIDOR)) {
+		if (corridorTimer.getElapsedTime().asSeconds() >= 4) {
+			moveInDir();
+			drawCorridor();
+			corridorTimer.restart();
+		}
+		else {
+			return;
+		}
 	}
-	else if ((stateNum == CORRIDOR && lastState == SLOW_CORRIDOR) || (stateNum == SLOW_CORRIDOR && lastState == CORRIDOR)) {
+
+	if (stateNum == lastState || stateNum == 0) {
 		return;
 	}
 
@@ -264,6 +271,7 @@ void Map::clear()
 	}
 	curGridPos = {gridSize.first / 2, 3*(gridSize.second - 1)/4};
 	direction = UP;
+	directionIndicator.setRotation(0);
 	updateRobotIndicator();
 }
 
@@ -275,6 +283,11 @@ void Map::updateRobotIndicator()
 
 void Map::empty(uint8_t xGridPos, uint8_t yGridPos)
 {
+	if (xGridPos >= gridSize.first || yGridPos >= gridSize.second) {
+		clear();
+		return;
+	}
+
 	for (auto& i : mapLines[xGridPos][yGridPos]) {
 		delete[] i;
 	}
@@ -301,10 +314,8 @@ void Map::moveInDir()
 
 	if (curGridPos.first >= gridSize.first || curGridPos.second >= gridSize.second) {
 		clear();
-		return;
 	}
-	robotShape.setPosition(xpos + width / (2 * gridSize.first) + curGridPos.first * width / gridSize.first, ypos + height / (2 * gridSize.second) + curGridPos.second * height / gridSize.second);
-
+	updateRobotIndicator();
 }
 
 void Map::rotateCW()
@@ -373,7 +384,8 @@ void Map::basicDrawDeadEnd(DIRECTION dir)
 		basicDrawLine(curGridPos.first, curGridPos.second - 1, (DIRECTION)((finalDir + 1) % 4));
 		basicDrawLine(curGridPos.first, curGridPos.second - 1, (DIRECTION)((finalDir + 3) % 4));
 		break;
-	case RIGHT:empty(curGridPos.first + 1, curGridPos.second);
+	case RIGHT:
+		empty(curGridPos.first + 1, curGridPos.second);
 		basicDrawLine(curGridPos.first + 1, curGridPos.second, (DIRECTION)((finalDir) % 4));
 		basicDrawLine(curGridPos.first + 1, curGridPos.second, (DIRECTION)((finalDir + 1) % 4));
 		basicDrawLine(curGridPos.first + 1, curGridPos.second, (DIRECTION)((finalDir + 3) % 4));

@@ -18,12 +18,7 @@
 #include "Map.h"
 
 #define UPS 30.f
-enum MODE{
-	AUTO,
-	MANUAL,
-	RACE,
-	DUNNO
-};
+
 struct Threadinfo {
 	bool& running;
 	sf::Mutex& bufMutex;

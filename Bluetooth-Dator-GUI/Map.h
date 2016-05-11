@@ -14,6 +14,13 @@ enum DIRECTION {
 	LEFT
 };
 
+enum MODE {
+	AUTO,
+	MANUAL,
+	RACE,
+	DUNNO
+};
+
 typedef enum {
 	STOP = 1,
 	DEAD_END = 2,
@@ -88,7 +95,7 @@ public:
 	Map(float, float, float, float, uint8_t, uint8_t, sf::Font*, std::string = "");
 	~Map();
 
-	void push(uint8_t);
+	void push(uint8_t, MODE);
 	void draw(sf::RenderWindow&);
 	void clear();
 private:
