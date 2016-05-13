@@ -98,16 +98,10 @@ bool Xboxcontroller::Y_Pressed() {
 }
 
 bool Xboxcontroller::leftLeverActive() {
-	if (left_lever_active) {
-		return true;
-	}
-	return false;
+	return left_lever_active;
 }
 bool Xboxcontroller::rightLeverActive() {
-	if (right_lever_active) {
-		return true;
-	}
-	return false;
+	return right_lever_active;
 }
 
 float Xboxcontroller::triggerValue() {
@@ -176,6 +170,11 @@ float Xboxcontroller::rightStickIntensity() {
 	}
 }
 
+sf::Vector2f Xboxcontroller::getRightAxisPosition()
+{
+	return right_lever_speed;
+}
+
 Xboxcontroller::~Xboxcontroller()
 {
 
@@ -184,7 +183,6 @@ Xboxcontroller::~Xboxcontroller()
 void Xboxcontroller::update() {
 	left_lever_speed = sf::Vector2f(sf::Joystick::getAxisPosition(0, sf::Joystick::X), sf::Joystick::getAxisPosition(0, sf::Joystick::Y));
 	right_lever_speed = sf::Vector2f(sf::Joystick::getAxisPosition(0, sf::Joystick::U), sf::Joystick::getAxisPosition(0, sf::Joystick::R));
-
 
 	if (left_lever_speed.x > 20.f || left_lever_speed.x < -20.f || left_lever_speed.y > 20.f || left_lever_speed.y < -20.f) {
 		left_lever_active = true;

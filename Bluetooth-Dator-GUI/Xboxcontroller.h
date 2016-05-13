@@ -30,6 +30,8 @@ public:
 	float rightStickAngle();
 	float rightStickIntensity();
 
+	sf::Vector2f getRightAxisPosition();
+
 private:
 	sf::Texture controller_texture;
 	sf::Texture button_overlay_texture;

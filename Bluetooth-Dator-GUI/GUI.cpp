@@ -4,16 +4,16 @@
 
 GUI::GUI(sf::Font& font) :
 	localMainBuffer{ new unsigned char[16] },
-	incomingBuffer{new unsigned char[17]},
+	incomingBuffer{ new unsigned char[17] },
 	outgoingBuffer{ new unsigned char[16] },
 	timeOfLastUpdate{ sf::Time::Zero },
 	duration{ sf::Time::Zero },
 	frameTime{ sf::seconds(1.f / UPS) },
 	running{ false },
 	mode{ DUNNO },
-	windowHandle{NULL},
+	windowHandle{ NULL },
 	bluetoothPort{},
-	xboxcontroller {70, 630, 300, 200},
+	xboxcontroller{ 70, 630, 300, 200 },
 	//timeHist{ 30, 100, 600, 380, 10, &font , "Downtime" },
 	graphIR0{ 1250, 30, 300, 100, 10, &font , "IR0" },
 	graphIR1{ 1250, 170, 300, 100, 10 , &font , "IR1" },
@@ -29,20 +29,20 @@ GUI::GUI(sf::Font& font) :
 	IMUroll{ 660, 250, 180, 180 , &font, "IMU Roll" },
 	IMUpitch{ 660, 470, 180, 180 , &font, "IMU Pitch" },
 	stateChart{ 915, 330, 300, 520, &font, "State Chart", 20 },
-	map{15, 30, 620, 450, 21, 17, &font, "Labyrinth map"}
+	map{ 15, 30, 620, 450, 21, 17, &font, "Labyrinth map" }
 {
 	settings.antialiasingLevel = 8;
 	settings.depthBits = 24;
 	//F?nstret hanteras som om det vore 1600x900 hela tiden.
 	window.create(sf::VideoMode(1600, 900, 64), "SpiderPig Control Center", sf::Style::Default, settings);
 	window.setPosition(sf::Vector2i(10, 10));
-	
+
 	sf::Image icon;
 	if (icon.loadFromFile("Bilder/spig_small.png"))
 	{
-		window.setIcon(32,32,icon.getPixelsPtr());
+		window.setIcon(32, 32, icon.getPixelsPtr());
 	}
-	
+
 	setlocale(LC_ALL, "");
 
 	//Mode-visar-cirkel och text
@@ -166,7 +166,7 @@ void GUI::run()
 
 	//Tr?d k?rs
 	windowHandle = GetForegroundWindow();
-	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer, windowHandle, bluetoothPort};
+	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer, windowHandle, bluetoothPort };
 	sf::Thread btThread(&GUI::bluetoothThread, ti);
 	btThread.launch();
 	sf::Event e;
@@ -232,7 +232,7 @@ void GUI::draw()
 	glTranslatef(-8.f, -3.f, -100.f);
 	glRotatef(-(float)twoCompToDec(localMainBuffer[10] + (localMainBuffer[11] << 8), 16), 0.f, 1.f, 0.f);
 	glRotatef((float)twoCompToDec(localMainBuffer[13], 8), 1.f, 0.f, 0.f);
-	glRotatef((float)twoCompToDec(localMainBuffer[12], 8), 0.f, 0.f, 1.f);	
+	glRotatef((float)twoCompToDec(localMainBuffer[12], 8), 0.f, 0.f, 1.f);
 
 	// Draw the cube
 	glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -324,8 +324,8 @@ void GUI::pollEvent(sf::Event& e, sf::Thread& btThread)
 			}
 			break;
 		case sf::Event::Resized:
-				glViewport(0, 0, e.size.width, e.size.height);
-				break;
+			glViewport(0, 0, e.size.width, e.size.height);
+			break;
 		default:
 			break;
 		}
@@ -368,6 +368,10 @@ void GUI::pushOutgoing()
 	if (xboxcontroller.leftLeverActive() || (int)xboxcontroller.triggerValue() != 0) {
 		outgoingBuffer[0] |= 3;
 	}
+	if (xboxcontroller.rightLeverActive())
+	{
+		outgoingBuffer[0] |= 0x80;
+	}
 	if (xboxcontroller.dpadYAxis() != 0) {
 		outgoingBuffer[0] |= 4;
 	}
@@ -405,6 +409,14 @@ void GUI::pushOutgoing()
 	outgoingBuffer[5] = param.kp;
 	outgoingBuffer[6] = param.kd;
 	outgoingBuffer[7] = xboxcontroller.dpadXAxis();
+
+	sf::Vector2f pos = xboxcontroller.getRightAxisPosition();
+
+	uint8_t x = pos.x*7.f / 100.f + 8;
+	uint8_t y = pos.y*7.f / 100.f + 8;
+
+	outgoingBuffer[8] = ((x & 0x0F) << 4) + (y & 0x0F);
+
 	bufMutex.unlock();
 }
 
@@ -467,7 +479,7 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 
 	int packetCount = 0;
 
-	while (!ti.bluetoothPort.isConnected() && ti.running) 
+	while (!ti.bluetoothPort.isConnected() && ti.running)
 	{
 		std::cout << "Trying to connect..." << std::endl;
 		sf::sleep(sf::milliseconds(50));
@@ -483,7 +495,7 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 	unsigned int checksum{ 0 };
 	while (ti.running) {
 
-		while (!ti.bluetoothPort.isConnected()) 
+		while (!ti.bluetoothPort.isConnected())
 		{
 			std::cout << "Disconnected!!\n" << "Trying to connect..." << std::endl;
 			sf::sleep(sf::milliseconds(50));
@@ -496,7 +508,7 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 			std::memcpy(ti.incomingBuffer, tempIncomingBuffer, 16);
 			ti.bufMutex.unlock();
 		}
-		else 
+		else
 		{
 			continue;
 		}
@@ -510,7 +522,7 @@ void GUI::bluetoothThread(Threadinfo& ti) {
 			checksum += ti.outgoingBuffer[i];
 		}
 		ti.outgoingBuffer[15] = checksum & 0x000000FF;
-		
+
 		std::cout << "Sending buffer, here is first byte: ";
 		std::cout << (int)ti.outgoingBuffer[0] << std::endl;
 		ti.bluetoothPort.sendArray(ti.outgoingBuffer, 16);
