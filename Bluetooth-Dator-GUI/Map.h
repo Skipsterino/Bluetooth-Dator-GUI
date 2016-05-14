@@ -85,7 +85,8 @@ typedef enum {
 	DEAD_END_D = 50,			// TEST_STATE_7
 	CHECK_IF_LOW_OBSTACLE = 51,
 	CHECK_IF_HIGH_OBSTACLE = 52,
-	TEST_STATE_10 = 53,
+	CENTER_CRAB_DOWN = 53,
+	CENTER_CRAB_UP = 54,
 } STATES;
 
 class Map
@@ -133,6 +134,10 @@ private:
 	void drawHighObst();
 	void drawLowObst();
 	void drawDeadEnd();
+	void drawDeadEndA(DIRECTION);
+	void drawDeadEndB(DIRECTION);
+	void drawDeadEndC();
+	void drawDeadEndD();
 	void drawCorridor();
 	void drawTurn(DIRECTION);
 	void drawJunctionA(DIRECTION);

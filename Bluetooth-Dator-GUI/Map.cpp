@@ -136,6 +136,48 @@ void Map::push(uint8_t stateNum, MODE mode)
 		rotateCW();
 		lastState = stateNum;
 		break;
+	case DEAD_END_A_LEFT:
+		moveInDir();
+		drawDeadEndA(LEFT);
+		rotateCW();
+		rotateCW();
+		lastState = stateNum;
+		break;
+	case DEAD_END_A_RIGHT:
+		moveInDir();
+		drawDeadEndA(RIGHT);
+		rotateCW();
+		rotateCW();
+		lastState = stateNum;
+		break;
+	case DEAD_END_B_LEFT:
+		moveInDir();
+		drawDeadEndB(LEFT);
+		rotateCW();
+		rotateCW();
+		lastState = stateNum;
+		break;
+	case DEAD_END_B_RIGHT:
+		moveInDir();
+		drawDeadEndB(RIGHT);
+		rotateCW();
+		rotateCW();
+		lastState = stateNum;
+		break;
+	case DEAD_END_C:
+		moveInDir();
+		drawDeadEndC();
+		rotateCW();
+		rotateCW();
+		lastState = stateNum;
+		break;
+	case DEAD_END_D:
+		moveInDir();
+		drawDeadEndD();
+		rotateCW();
+		rotateCW();
+		lastState = stateNum;
+		break;
 	case TURN_RIGHT:
 		moveInDir();
 		drawTurn(RIGHT);
@@ -509,6 +551,60 @@ void Map::drawDeadEnd()
 	basicDrawWall(LEFT);
 }
 
+void Map::drawDeadEndA(DIRECTION dir)
+{
+	empty(curGridPos.first, curGridPos.second);
+	switch (dir) {
+	case RIGHT:
+		basicDrawWall(LEFT);
+		basicDrawWall(UP);
+		basicDrawDeadEnd(RIGHT);
+		break;
+	case LEFT:
+		basicDrawWall(RIGHT);
+		basicDrawWall(UP);
+		basicDrawDeadEnd(LEFT);
+		break;
+	default:
+		std::cout << "Hit ska vi inte komma i DeadEndA" << std::endl;
+	}
+}
+
+void Map::drawDeadEndB(DIRECTION dir)
+{
+	empty(curGridPos.first, curGridPos.second);
+	switch (dir) {
+	case RIGHT:
+		basicDrawWall(LEFT);
+		basicDrawDeadEnd(UP);
+		basicDrawDeadEnd(RIGHT);
+		break;
+	case LEFT:
+		basicDrawWall(RIGHT);
+		basicDrawDeadEnd(UP);
+		basicDrawDeadEnd(LEFT);
+		break;
+	default:
+		std::cout << "Hit ska vi inte komma i DeadEndB" << std::endl;
+	}
+}
+
+void Map::drawDeadEndC()
+{
+	empty(curGridPos.first, curGridPos.second);
+	basicDrawDeadEnd(RIGHT);
+	basicDrawWall(UP);
+	basicDrawDeadEnd(LEFT);
+}
+
+void Map::drawDeadEndD()
+{
+	empty(curGridPos.first, curGridPos.second);
+	basicDrawDeadEnd(RIGHT);
+	basicDrawDeadEnd(UP);
+	basicDrawDeadEnd(LEFT);
+}
+
 void Map::drawCorridor()
 {
 	empty(curGridPos.first, curGridPos.second);
@@ -518,13 +614,12 @@ void Map::drawCorridor()
 
 void Map::drawTurn(DIRECTION dir)
 {	
+	empty(curGridPos.first, curGridPos.second);
 	if (dir == LEFT) {
-		empty(curGridPos.first, curGridPos.second);
 		basicDrawWall(UP);
 		basicDrawWall(RIGHT);
 	}
 	else if (dir == RIGHT) {
-		empty(curGridPos.first, curGridPos.second);
 		basicDrawWall(UP);
 		basicDrawWall(LEFT);
 	}
@@ -535,6 +630,7 @@ void Map::drawTurn(DIRECTION dir)
 
 void Map::drawJunctionA(DIRECTION dir)
 {
+	empty(curGridPos.first, curGridPos.second);
 	if (dir == LEFT) {
 		basicDrawDeadEnd(UP);
 		basicDrawCorridor(LEFT);
@@ -552,6 +648,7 @@ void Map::drawJunctionA(DIRECTION dir)
 
 void Map::drawJunctionB(DIRECTION dir)
 {
+	empty(curGridPos.first, curGridPos.second);
 	if (dir == LEFT) {
 		basicDrawDeadEnd(LEFT);
 		basicDrawCorridor(UP);
@@ -569,6 +666,7 @@ void Map::drawJunctionB(DIRECTION dir)
 
 void Map::drawJunctionC(DIRECTION dir)
 {
+	empty(curGridPos.first, curGridPos.second);
 	if (dir == LEFT) {
 		basicDrawDeadEnd(RIGHT);
 		basicDrawCorridor(LEFT);
@@ -586,6 +684,7 @@ void Map::drawJunctionC(DIRECTION dir)
 
 void Map::drawJunctionD(DIRECTION dir)
 {
+	empty(curGridPos.first, curGridPos.second);
 	if (dir == LEFT) {
 		basicDrawDeadEnd(RIGHT);
 		basicDrawDeadEnd(UP);
@@ -608,6 +707,7 @@ void Map::drawJunctionD(DIRECTION dir)
 
 void Map::drawJunctionE(DIRECTION dir)
 {
+	empty(curGridPos.first, curGridPos.second);
 	if (dir == LEFT) {
 		basicDrawCorridor(UP);
 		basicDrawCorridor(LEFT);
@@ -625,6 +725,7 @@ void Map::drawJunctionE(DIRECTION dir)
 
 void Map::drawJunctionF()
 {
+	empty(curGridPos.first, curGridPos.second);
 	basicDrawCorridor(RIGHT);
 	basicDrawCorridor(LEFT);
 	basicDrawWall(UP);
@@ -632,6 +733,7 @@ void Map::drawJunctionF()
 
 void Map::drawJunctionG()
 {
+	empty(curGridPos.first, curGridPos.second);
 	basicDrawDeadEnd(UP);
 	basicDrawCorridor(RIGHT);
 	basicDrawCorridor(LEFT);
@@ -639,6 +741,7 @@ void Map::drawJunctionG()
 
 void Map::drawJunctionH(DIRECTION dir)
 {
+	empty(curGridPos.first, curGridPos.second);
 	if (dir == LEFT) {
 		basicDrawCorridor(UP);
 		basicDrawCorridor(LEFT);
@@ -656,6 +759,7 @@ void Map::drawJunctionH(DIRECTION dir)
 
 void Map::drawJunctionI()
 {
+	empty(curGridPos.first, curGridPos.second);
 	basicDrawCorridor(UP);
 	basicDrawCorridor(RIGHT);
 	basicDrawCorridor(LEFT);

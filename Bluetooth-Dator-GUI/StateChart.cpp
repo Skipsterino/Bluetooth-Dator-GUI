@@ -75,7 +75,8 @@ StateChart::StateChart(float xpos, float ypos, float width, float height, sf::Fo
 	stateKeyMap.emplace(50, "Dead end D");
 	stateKeyMap.emplace(51, "Check if low obstacle");
 	stateKeyMap.emplace(52, "Check if high obstacle");
-	stateKeyMap.emplace(53, "Test state 10");
+	stateKeyMap.emplace(53, "Center crab down");
+	stateKeyMap.emplace(54, "Center crab up");
 
 	//v?nster lodr?t linje
 	graphLines.push_back(new sf::Vertex[2]{
