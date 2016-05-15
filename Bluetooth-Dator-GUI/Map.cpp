@@ -260,6 +260,7 @@ void Map::push(uint8_t stateNum, MODE mode)
 	case JUNCTION_G:
 		moveInDir();
 		drawJunctionG();
+		rotateCCW();
 		lastState = stateNum;
 		break;
 	case JUNCTION_H_RIGHT:
