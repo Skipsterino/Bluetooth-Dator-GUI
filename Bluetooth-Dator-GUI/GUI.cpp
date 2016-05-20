@@ -212,6 +212,7 @@ void GUI::run()
 
 void GUI::draw()
 {
+	//Öppnar för 2D-ritning och ritar alla grafer och diagram
 	window.pushGLStates();
 	window.clear(sf::Color::White);
 	xboxcontroller.draw(window);
@@ -234,6 +235,7 @@ void GUI::draw()
 	window.draw(modeCircle);
 	window.draw(modeText);
 	window.popGLStates();
+	//Stängde 2D-ritning
 
 	// Rensar depth buffer i openGL
 	glClear(GL_DEPTH_BUFFER_BIT);
