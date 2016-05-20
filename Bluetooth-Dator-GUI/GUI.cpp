@@ -164,30 +164,43 @@ void GUI::run()
 		glDisableClientState(GL_COLOR_ARRAY);
 	}
 
-	//Tr?d k?rs
+	//Hämta fönstret och sparar handtaget
 	windowHandle = GetForegroundWindow();
+	//Skapar trådens informationsobjekt som skickas med när den startas
 	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer, windowHandle, bluetoothPort };
+	//Skapar och startar blåtandstråden
 	sf::Thread btThread(&GUI::bluetoothThread, ti);
 	btThread.launch();
+	
+	//Defninierar event och senaste autonoma tillståndet
 	sf::Event e;
 	uint8_t lastState{ 0 };
+	
+	//Minimerar fönstret (för att kunna skriva in COM-port)
 	ShowWindow(windowHandle, SW_MINIMIZE);
 
 	while (running) {
-
+		//Fixerar tiden loopen började
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
 
 		xboxcontroller.update();
+		//Läser in senaste autonoma tillståndet
 		lastState = localMainBuffer[14];
-
+		
+		//hämtar, om någon, ny inkommande data från inputarrayen
 		grabAndPushIncoming();
+		
+		//Specialfall för om läget är RACE och vi går in i AUTO, ändra till AUTO
 		if (mode == RACE && lastState != localMainBuffer[14]) {
 			mode = AUTO;
 			modeCircle.setFillColor(sf::Color::Red);
 			modeText.setString("Auto");
 		}
+		
 		pollEvent(e, btThread);
+		//Pushar all data som ska skickas ut på blåtand
 		pushOutgoing();
+		
 		draw();
 
 		sleepTimeLeft();
