@@ -235,14 +235,17 @@ void GUI::draw()
 	window.draw(modeText);
 	window.popGLStates();
 
-	// Clear the depth buffer
+	// Rensar depth buffer i openGL
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	// Apply some transformations
+	// Gör MODELVIEW och laddar rätblock som ska ritas
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	//Skalar rätblock
 	glScalef(10.f, 10.f, 1.f);
+	//Flyttar rätblock till rätt plats på skärmen
 	glTranslatef(-8.f, -3.f, -100.f);
+	//Roterar i Y, X, Z -led (i den ordningen specifikt) beroende på inkommande vinkel från IMU
 	glRotatef(-(float)twoCompToDec(localMainBuffer[10] + (localMainBuffer[11] << 8), 16), 0.f, 1.f, 0.f);
 	glRotatef((float)twoCompToDec(localMainBuffer[13], 8), 1.f, 0.f, 0.f);
 	glRotatef((float)twoCompToDec(localMainBuffer[12], 8), 0.f, 0.f, 1.f);
