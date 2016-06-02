@@ -1,3 +1,14 @@
+/**
+* @file Histogram.h
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Graph class which plots values against a time axis
+*
+* Plots the last 10 seconds of values pushed into
+* the graph class
+*/
+
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H
 

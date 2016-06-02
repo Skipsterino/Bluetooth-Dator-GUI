@@ -1,3 +1,14 @@
+/**
+* @file AngleGraph.h
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Graph displaying pushed angle
+*
+* A class to display angles pushed 
+* into the graph
+*/
+
 #ifndef ANGLEGRAPH_H
 #define ANGLEGRAPH_H
 

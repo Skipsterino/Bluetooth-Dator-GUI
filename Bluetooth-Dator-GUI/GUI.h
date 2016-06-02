@@ -1,3 +1,14 @@
+/**
+* @file GUI.h
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Base class for the entire GUI
+*
+* A base class to hold all nessesary GUI-components
+* and charts
+*/
+
 #ifndef GUI_H
 
 #define GUI_H

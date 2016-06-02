@@ -18,11 +18,6 @@ SerialPort::~SerialPort() {
 
 int SerialPort::connect(std::string& port) {
 
-	//wchar_t* port_a[5];
-	//sprintf_s(port_a, port.c_str());
-
-
-
 	const size_t cSize = strlen(port.c_str()) + 1;
 	wchar_t* wc = new wchar_t[cSize];
 	mbstowcs(wc, port.c_str(), cSize);

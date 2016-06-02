@@ -89,11 +89,12 @@ Map::~Map()
 
 void Map::push(uint8_t stateNum, MODE mode)
 {
+	//M?ste vara autonomt
 	if (mode != AUTO) {
 		corridorTimer.restart();
 		return;
 	}
-
+	//Om korridor f?r l?nge rita 2 korridorssegment ist?llet f?r ett
 	if ((stateNum == CORRIDOR || stateNum == SLOW_CORRIDOR) &&
 		(lastState == CORRIDOR || lastState == SLOW_CORRIDOR)) {
 		if (corridorTimer.getElapsedTime().asSeconds() >= 4) {
@@ -105,11 +106,12 @@ void Map::push(uint8_t stateNum, MODE mode)
 			return;
 		}
 	}
-
+	//Om samma state som f?rra, strunta i
 	if (stateNum == lastState || stateNum == 0) {
 		return;
 	}
 
+	//Om n?got state som ska triggas p?, rita ut korsningen
 	switch (stateNum)
 	{
 	case SLOW_CORRIDOR:

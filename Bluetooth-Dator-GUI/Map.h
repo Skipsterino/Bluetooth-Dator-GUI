@@ -1,3 +1,13 @@
+/**
+* @file Map.h
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Class making a map of the labyrinth based on state
+*
+* A map class mapping the labyrinth which in the robot has
+* walked by looking at which autonomous' states the robot entered
+*/
 
 #ifndef MAP_H
 #define MAP_H

@@ -169,8 +169,11 @@ void GUI::run()
 	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer, windowHandle, bluetoothPort };
 	sf::Thread btThread(&GUI::bluetoothThread, ti);
 	btThread.launch();
+
 	sf::Event e;
+
 	uint8_t lastState{ 0 };
+
 	ShowWindow(windowHandle, SW_MINIMIZE);
 
 	while (running) {
@@ -337,10 +340,11 @@ void GUI::grabAndPushIncoming()
 	bufMutex.lock();
 	if (incomingBuffer[0] != 0)
 	{
+		//Hämta inkommande array till en lokal array
 		std::memcpy(localMainBuffer, incomingBuffer, 16);
 		std::memset(incomingBuffer, 0, sizeof(incomingBuffer));
 		bufMutex.unlock();
-		//Hantera data
+		//Hantera lokala arrayen
 		graphIR0.push(localMainBuffer[0]);
 		graphIR1.push(localMainBuffer[1]);
 		graphIR2.push(localMainBuffer[2]);

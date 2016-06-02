@@ -1,3 +1,14 @@
+/**
+* @file SerialPort.h
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Wrapper class for the serial communication interface
+*
+* Class to wrap the interface of serial-port communication
+* through simple name referencing
+*/
+
 #ifndef SERIALPORT_H
 #define SERIALPORT_H
 
