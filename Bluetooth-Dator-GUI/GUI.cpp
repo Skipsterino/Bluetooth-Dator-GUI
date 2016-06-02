@@ -164,33 +164,42 @@ void GUI::run()
 		glDisableClientState(GL_COLOR_ARRAY);
 	}
 
-	//Tr?d k?rs
+	//Hämta fönstret och sparar handtaget
 	windowHandle = GetForegroundWindow();
+	//Skapar trådens informationsobjekt som skickas med när den startas
 	Threadinfo ti{ running, bufMutex , outgoingBuffer, incomingBuffer, windowHandle, bluetoothPort };
+	//Skapar och startar blåtandstråden
 	sf::Thread btThread(&GUI::bluetoothThread, ti);
 	btThread.launch();
-
+	//Defninierar event och senaste autonoma tillståndet
 	sf::Event e;
 
 	uint8_t lastState{ 0 };
-
+	//Minimerar fönstret (för att kunna skriva in COM-port)
 	ShowWindow(windowHandle, SW_MINIMIZE);
 
 	while (running) {
-
+		//Fixerar tiden loopen började
 		timeOfLastUpdate = sf::seconds(tickClock.getElapsedTime().asSeconds());
 
 		xboxcontroller.update();
+		//Läser in senaste autonoma tillståndet
 		lastState = localMainBuffer[14];
-
+		
+		//hämtar, om någon, ny inkommande data från inputarrayen
 		grabAndPushIncoming();
+		
+		//Specialfall för om läget är RACE och vi går in i AUTO, ändra till AUTO
 		if (mode == RACE && lastState != localMainBuffer[14]) {
 			mode = AUTO;
 			modeCircle.setFillColor(sf::Color::Red);
 			modeText.setString("Auto");
 		}
+		
 		pollEvent(e, btThread);
+		//Pushar all data som ska skickas ut på blåtand
 		pushOutgoing();
+		
 		draw();
 
 		sleepTimeLeft();
@@ -202,6 +211,7 @@ void GUI::run()
 
 void GUI::draw()
 {
+	//Öppnar för 2D-ritning och ritar alla grafer och diagram
 	window.pushGLStates();
 	window.clear(sf::Color::White);
 	xboxcontroller.draw(window);
@@ -224,15 +234,19 @@ void GUI::draw()
 	window.draw(modeCircle);
 	window.draw(modeText);
 	window.popGLStates();
+	//Stängde 2D-ritning
 
-	// Clear the depth buffer
+	// Rensar depth buffer i openGL
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	// Apply some transformations
+	// Gör MODELVIEW och laddar rätblock som ska ritas
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	//Skalar rätblock
 	glScalef(10.f, 10.f, 1.f);
+	//Flyttar rätblock till rätt plats på skärmen
 	glTranslatef(-8.f, -3.f, -100.f);
+	//Roterar i Y, X, Z -led (i den ordningen specifikt) beroende på inkommande vinkel från IMU
 	glRotatef(-(float)twoCompToDec(localMainBuffer[10] + (localMainBuffer[11] << 8), 16), 0.f, 1.f, 0.f);
 	glRotatef((float)twoCompToDec(localMainBuffer[13], 8), 1.f, 0.f, 0.f);
 	glRotatef((float)twoCompToDec(localMainBuffer[12], 8), 0.f, 0.f, 1.f);
