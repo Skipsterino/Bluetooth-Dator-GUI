@@ -1,3 +1,9 @@
+/**
+* File: Map.cpp
+* Version: 1.0
+* Last edited: 2 juni 2016
+* Author(s): Kevin Kjell?n
+*/
 
 #include "Map.h"
 
