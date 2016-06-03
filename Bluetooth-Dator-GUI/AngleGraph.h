@@ -28,7 +28,7 @@ public:
 	* @param ypos The Y-position of the graphics of the graph
 	* @param width The width of the graphics of the graph
 	* @param height The height of the graphics of the graph
-	* @param font Pointer to the font the text in the graph uses
+	* @param fontPtr Pointer to the font the text in the graph uses
 	* @param titletext String with the given name of the graph
 	*/
 	AngleGraph(float, float, float, float, sf::Font*, std::string);
@@ -39,7 +39,7 @@ public:
 	*
 	* Pushes the value given into the graph, removing the
 	* previous value
-	* @param value The value which is pushed into the graph
+	* @param angle The value which is pushed into the graph
 	*/
 	void push(float);
 
@@ -64,6 +64,12 @@ private:
 	* @brief Formats a text object with given values
 	*
 	* Gives a text object the given names, fonts, sizes, etc.
+	*
+	* @param text The text objected to be formatted.
+	* @param fontPtr Pointer to the font to be used.
+	* @param textString The string to be printed.
+	* @param xposition X position of the string
+	* @param yposition Y position of the string
 	*/
 	void formatText(sf::Text&, sf::Font*, std::string, float, float);
 };

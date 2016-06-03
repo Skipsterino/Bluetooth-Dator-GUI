@@ -31,8 +31,8 @@ public:
 	* @param ypos The Y-position of the graphics of the graph
 	* @param width The width of the graphics of the graph
 	* @param height The height of the graphics of the graph
-	* @param font Pointer to the font the text in the graph uses
-	* @param titletext String with the given name of the graph
+	* @param fontPtr Pointer to the font the text in the graph uses
+	* @param title String with the given name of the graph
 	* @param numberOfItems Int with the number of states the chart should hold
 	*/
 	StateChart(float, float, float, float, sf::Font*, std::string = "State Chart", int = 16);
@@ -43,7 +43,7 @@ public:
 	*
 	* Pushes the value given into the graph and matches
 	* it to a specific state in stateKeyMap
-	* @param value The value ( or state) which is pushed into the graph
+	* @param key The value ( or state) which is pushed into the graph
 	*/
 	void push(int);
 

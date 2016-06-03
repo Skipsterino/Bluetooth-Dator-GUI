@@ -1,8 +1,13 @@
 /**
-* File: StateChart.cpp
-* Version: 1.0
-* Last edited: 2 juni 2016
-* Author(s): Kevin Kjell?n
+* @file StateChart.cpp
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Chart displaying latest states in auto-mode
+*
+* A chart displaying the latest states the robot has been in
+* by mapping the pushed in number against a number-to-state conversion
+* chart
 */
 
 #include "StateChart.h"

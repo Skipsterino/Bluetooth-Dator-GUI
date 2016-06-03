@@ -1,8 +1,12 @@
 /**
-* File: GUI.cpp
-* Version: 1.0
-* Last edited: 2 juni 2016
-* Author(s): Kevin Kjellén
+* @file GUI.cpp
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Base class for the entire GUI
+*
+* A base class to hold all nessesary GUI-components
+* and charts
 */
 
 #include "GUI.h"

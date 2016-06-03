@@ -1,8 +1,12 @@
 /**
-* File: SerialPort.cpp
-* Version: 1.0
-* Last edited: 2 juni 2016
-* Author(s): Kevin Kjell?n
+* @file SerialPort.cpp
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Wrapper class for the serial communication interface
+*
+* Class to wrap the interface of serial-port communication
+* through simple name referencing
 */
 
 #include "SerialPort.h"

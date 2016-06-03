@@ -28,7 +28,8 @@ public:
 	* @param ypos The Y-position of the graphics of the graph
 	* @param width The width of the graphics of the graph
 	* @param height The height of the graphics of the graph
-	* @param font Pointer to the font the text in the graph uses
+	* @param timeLimit Max lifetime of values
+	* @param fontPtr Pointer to the font the text in the graph uses
 	* @param titletext String with the given name of the graph
 	*/
 	Histogram(float, float, float, float, int, sf::Font*, std::string = "");

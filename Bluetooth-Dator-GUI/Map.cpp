@@ -1,8 +1,12 @@
 /**
-* File: Map.cpp
-* Version: 1.0
-* Last edited: 2 juni 2016
-* Author(s): Kevin Kjell?n
+* @file Map.cpp
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Class making a map of the labyrinth based on state
+*
+* A map class mapping the labyrinth which in the robot has
+* walked by looking at which autonomous' states the robot entered
 */
 
 #include "Map.h"

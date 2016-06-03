@@ -1,8 +1,12 @@
 /**
-* File: Xboxcontroller.cpp
-* Version: 1.0
-* Last edited: 2 juni 2016
-* Author(s): Kevin Kjell?n
+* @file Xboxcontroller.cpp
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Wrapper class for the XBOX-controller
+*
+* Class to wrap the interface against the XBOX-controller
+* to simplify use in code
 */
 
 #include <Math.h>

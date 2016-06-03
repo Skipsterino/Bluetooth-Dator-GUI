@@ -1,14 +1,16 @@
 /**
-* File: AngleGraph.cpp
-* Version: 1.0
-* Last edited: 2 juni 2016
-* Author(s): Kevin Kjell?n
+* @file AngleGraph.cpp
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Graph displaying pushed angle
+*
+* A class to display angles pushed 
+* into the graph
 */
 
 #include "AngleGraph.h"
 #include <cmath>
-
-
 
 AngleGraph::AngleGraph(float xpos, float ypos, float width, float height, sf::Font* fontPtr, std::string titletext) :
 	xpos{ xpos },

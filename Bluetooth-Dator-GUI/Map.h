@@ -17,6 +17,9 @@
 #include <utility>
 #include <iostream>
 
+/**
+* @brief Enumeration of the possible directions
+*/
 enum DIRECTION {
 	UP,
 	RIGHT,
@@ -24,6 +27,9 @@ enum DIRECTION {
 	LEFT
 };
 
+/**
+* @brief Enumeration of the possible control modes
+*/
 enum MODE {
 	AUTO,
 	MANUAL,
@@ -31,6 +37,9 @@ enum MODE {
 	DUNNO
 };
 
+/**
+* @brief Enumeration of the possible states in the state machine
+*/
 typedef enum {
 	STOP = 1,
 	DEAD_END = 2,
@@ -112,9 +121,8 @@ public:
 	* @param height The height of the map
 	* @param gridWidth The number of blocks the map has in width
 	* @param gridHeight The number of blocks the map has in height
-	* @param font Pointer to the font the text in the map uses
+	* @param fontPtr Pointer to the font the text in the map uses
 	* @param titletext String with the given name of the map
-	* @param numberOfItems Int with the number of states the chart should hold
 	*/
 	Map(float, float, float, float, uint8_t, uint8_t, sf::Font*, std::string = "");
 	~Map();

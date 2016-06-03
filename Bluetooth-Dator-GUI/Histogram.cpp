@@ -1,8 +1,12 @@
 /**
-* File: Histogram.cpp
-* Version: 1.0
-* Last edited: 2 juni 2016
-* Author(s): Kevin Kjell?n
+* @file Histogram.cpp
+* @version 1.0
+* @author Kevin Kjell?n
+* @date 2 june 2016
+* @brief Graph class which plots values against a time axis
+*
+* Plots the last 10 seconds of values pushed into
+* the graph class
 */
 
 #include "Histogram.h"

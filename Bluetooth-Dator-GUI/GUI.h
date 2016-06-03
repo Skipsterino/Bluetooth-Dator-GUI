@@ -28,8 +28,14 @@
 #include "StateChart.h"
 #include "Map.h"
 
+/**
+* @brief The number of times per second the gui should be updated.
+*/
 #define UPS 30.f
 
+/**
+* @brief Struct containing info about a thread
+*/
 struct Threadinfo {
 	bool& running;
 	sf::Mutex& bufMutex;
@@ -39,6 +45,9 @@ struct Threadinfo {
 	SerialPort& bluetoothPort;
 };
 
+/**
+* @brief Struct containing control parameters
+*/
 struct Parameters {
 	unsigned char kp;
 	unsigned char kd;
@@ -47,6 +56,11 @@ struct Parameters {
 class GUI
 {
 public:
+	/**
+	* @brief Class constructor
+	*
+	* @param font The font to be used
+	*/
 	GUI(sf::Font&);
 	~GUI();
 

@@ -16,24 +16,65 @@
 #include <string>
 
 class SerialPort {
-private:
-	HANDLE serialPortHandle;
-	bool connected{ false };
-
 public:
+
+	/**
+	* @brief Class constructor
+	*/
 	SerialPort();
 	~SerialPort();
 
+	/**
+	* @brief Connects to a serial port using a string ref.
+	*
+	* @param port The port to connect to
+	*/
 	int connect(std::string& port);
+	
+	/**
+	* @brief Connects to a serial port using a wchar_t-array.
+	*
+	* @param device The port to connect to
+	*/
 	int connect(wchar_t *device);
+	
+	/**
+	* @brief Disconnects the serial port.
+	*
+	*/
 	void disconnect(void);
 
+	/**
+	* @brief Return connection status
+	*
+	*/
 	bool isConnected() const;
 
+	/**
+	* @brief Sends an array of bytes over the serial port.
+	*
+	* @param buffer Pointer to the first byte of the buffer to send. 
+	* @param len Number of bytes to send.
+	*/
 	int sendArray(unsigned char *buffer, int len);
+	
+	/**
+	* @brief Recieves an array of bytes over the serial port.
+	*
+	* @param buffer Pointer to the first byte of the buffer to store incoming data.
+	* @param len Number of bytes to recieve.
+	*/
 	int getArray(unsigned char *buffer, int len);
 
+	/**
+	* @brief Flushes the internal storage.
+	*
+	*/
 	void clear();
+	
+private:
+	HANDLE serialPortHandle; /**< Handle to the windows managed serial port */
+	bool connected{ false }; /**< Connection status */
 };
 
 #endif
